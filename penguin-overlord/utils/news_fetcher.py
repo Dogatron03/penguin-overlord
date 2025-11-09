@@ -161,8 +161,31 @@ class OptimizedNewsFetcher:
                     continue  # Skip already posted items
                 
                 # Extract title
-                title_match = re.search(r'<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</title>', item, re.DOTALL)
-                title = unescape(title_match.group(1).strip()) if title_match else "No title"
+                title = None
+                title_match = re.search(r'<title(?:\s+[^>]*)?>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</title>', item, re.DOTALL)
+                if title_match:
+                    title = title_match.group(1).strip()
+                    # Strip any HTML tags from title
+                    title = re.sub(r'<[^>]+>', '', title)
+                    title = unescape(title).strip()
+                
+                # If no title or empty, try content/summary for a title
+                if not title:
+                    # Try to extract from content as fallback
+                    content_match = re.search(r'<content(?:\s+[^>]*)?>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</content>', item, re.DOTALL)
+                    if not content_match:
+                        content_match = re.search(r'<summary(?:\s+[^>]*)?>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</summary>', item, re.DOTALL)
+                    
+                    if content_match:
+                        content = re.sub(r'<[^>]+>', '', content_match.group(1))
+                        content = unescape(content.strip())
+                        # Get first sentence or first 100 chars
+                        first_sentence = re.split(r'[.!?]\s+', content)[0]
+                        title = first_sentence[:100] + ("..." if len(first_sentence) > 100 else "")
+                
+                # Final fallback
+                if not title:
+                    title = "Latest Update"
                 
                 # Extract link
                 link_match = re.search(r'<link(?:\s+[^>]*)?>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</link>', item, re.DOTALL)
@@ -174,12 +197,18 @@ class OptimizedNewsFetcher:
                 desc_match = re.search(r'<description>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</description>', item, re.DOTALL)
                 if not desc_match:
                     desc_match = re.search(r'<summary>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</summary>', item, re.DOTALL)
+                if not desc_match:
+                    desc_match = re.search(r'<content(?:\s+[^>]*)?>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</content>', item, re.DOTALL)
                 
                 description = ""
                 if desc_match:
                     desc = desc_match.group(1).strip()
-                    desc = re.sub(r'<[^>]+>', '', desc)  # Strip HTML tags
-                    desc = unescape(desc)
+                    # More aggressive HTML stripping
+                    desc = re.sub(r'<script[^>]*>.*?</script>', '', desc, flags=re.DOTALL | re.IGNORECASE)
+                    desc = re.sub(r'<style[^>]*>.*?</style>', '', desc, flags=re.DOTALL | re.IGNORECASE)
+                    desc = re.sub(r'<[^>]+>', '', desc)  # Strip all HTML tags
+                    desc = re.sub(r'\s+', ' ', desc)  # Normalize whitespace
+                    desc = unescape(desc).strip()
                     description = desc[:300] + "..." if len(desc) > 300 else desc
                 
                 # Use link as fallback GUID

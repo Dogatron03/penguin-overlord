@@ -246,7 +246,7 @@ async def main():
     parser.add_argument(
         '--category',
         required=True,
-        choices=['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve'],
+        choices=['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve', 'us_legislation', 'eu_legislation', 'general_news'],
         help='News category to fetch'
     )
     parser.add_argument(

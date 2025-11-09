@@ -124,7 +124,7 @@ class NewsManager(commands.Cog):
     async def set_channel(
         self,
         interaction: discord.Interaction,
-        category: Literal['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve', 'us_legislation', 'eu_legislation'],
+        category: Literal['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve', 'us_legislation', 'eu_legislation', 'general_news'],
         channel: discord.TextChannel
     ):
         """Set the posting channel for a news category."""
@@ -148,7 +148,7 @@ class NewsManager(commands.Cog):
     async def enable(
         self,
         interaction: discord.Interaction,
-        category: Literal['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve', 'us_legislation', 'eu_legislation']
+        category: Literal['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve', 'us_legislation', 'eu_legislation', 'general_news']
     ):
         """Enable auto-posting for a category."""
         if not interaction.user.guild_permissions.administrator:
@@ -178,7 +178,7 @@ class NewsManager(commands.Cog):
     async def disable(
         self,
         interaction: discord.Interaction,
-        category: Literal['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve', 'us_legislation', 'eu_legislation']
+        category: Literal['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve', 'us_legislation', 'eu_legislation', 'general_news']
     ):
         """Disable auto-posting for a category."""
         if not interaction.user.guild_permissions.administrator:
@@ -204,7 +204,7 @@ class NewsManager(commands.Cog):
     async def set_interval(
         self,
         interaction: discord.Interaction,
-        category: Literal['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve', 'us_legislation', 'eu_legislation'],
+        category: Literal['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve', 'us_legislation', 'eu_legislation', 'general_news'],
         hours: int
     ):
         """Set the posting interval for a category."""
@@ -238,7 +238,7 @@ class NewsManager(commands.Cog):
     async def toggle_source(
         self,
         interaction: discord.Interaction,
-        category: Literal['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve', 'us_legislation', 'eu_legislation'],
+        category: Literal['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve', 'us_legislation', 'eu_legislation', 'general_news'],
         source: str
     ):
         """Toggle a specific news source on/off."""
@@ -269,7 +269,7 @@ class NewsManager(commands.Cog):
     async def add_role(
         self,
         interaction: discord.Interaction,
-        category: Literal['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve', 'us_legislation', 'eu_legislation'],
+        category: Literal['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve', 'us_legislation', 'eu_legislation', 'general_news'],
         role: discord.Role
     ):
         """Add a role that can manage sources for this category."""
@@ -306,7 +306,7 @@ class NewsManager(commands.Cog):
     async def remove_role(
         self,
         interaction: discord.Interaction,
-        category: Literal['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve', 'us_legislation', 'eu_legislation'],
+        category: Literal['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve', 'us_legislation', 'eu_legislation', 'general_news'],
         role: discord.Role
     ):
         """Remove a role from managing this category."""
@@ -337,7 +337,7 @@ class NewsManager(commands.Cog):
     async def status(
         self,
         interaction: discord.Interaction,
-        category: Literal['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve', 'us_legislation', 'eu_legislation']
+        category: Literal['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve', 'us_legislation', 'eu_legislation', 'general_news']
     ):
         """Show current configuration for a category."""
         config = self.config.get(category, {})
@@ -387,7 +387,7 @@ class NewsManager(commands.Cog):
     async def list_sources(
         self,
         interaction: discord.Interaction,
-        category: Literal['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve', 'us_legislation', 'eu_legislation']
+        category: Literal['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve', 'us_legislation', 'eu_legislation', 'general_news']
     ):
         """List all available news sources for a category."""
         # Get the appropriate cog
@@ -396,7 +396,10 @@ class NewsManager(commands.Cog):
             'tech': 'TechNews',
             'gaming': 'GamingNews',
             'apple_google': 'AppleGoogleNews',
-            'cve': 'CVENews'
+            'cve': 'CVENews',
+            'us_legislation': 'USLegislationNews',
+            'eu_legislation': 'EULegislationNews',
+            'general_news': 'GeneralNews'
         }
         
         cog = self.bot.get_cog(cog_name_map[category])
