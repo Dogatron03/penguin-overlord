@@ -67,6 +67,9 @@ COPY --chown=penguin:penguin penguin-overlord/ ./penguin-overlord/
 COPY --chown=penguin:penguin events/ ./events/
 COPY --chown=penguin:penguin .env.example ./.env.example
 
+# Create data directory for cog state persistence with proper permissions
+RUN mkdir -p /app/data && chown -R penguin:penguin /app/data
+
 # Switch to non-root user
 USER penguin
 
