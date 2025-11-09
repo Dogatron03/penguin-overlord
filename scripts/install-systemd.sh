@@ -254,6 +254,14 @@ fi
 
 echo -e "${GREEN}✓${NC} Service file created"
 
+# Create data directory with proper permissions for cache files
+if [ "$IS_DOCKER" = true ]; then
+    mkdir -p "$PROJECT_DIR/data"
+    chown -R $ACTUAL_USER:$ACTUAL_USER "$PROJECT_DIR/data"
+    chmod -R 755 "$PROJECT_DIR/data"
+    echo -e "${GREEN}✓${NC} Data directory prepared"
+fi
+
 # Deploy news timers if optimized mode selected
 if [ "$DEPLOY_NEWS_TIMERS" = true ]; then
     echo ""
@@ -305,7 +313,7 @@ Type=oneshot
 User=$ACTUAL_USER
 Group=$ACTUAL_USER
 WorkingDirectory=$PROJECT_DIR
-ExecStart=/usr/bin/docker run --rm --name penguin-news-${category} --env-file $PROJECT_DIR/.env -v $PROJECT_DIR/data:/app/data $IMAGE_NAME python3 /app/penguin-overlord/news_runner.py --category ${category}
+ExecStart=/usr/bin/docker run --rm --name penguin-news-${category} --env-file $PROJECT_DIR/.env -v $PROJECT_DIR/data:/app/data $IMAGE_NAME python3 /app/penguin-overlord/news_runner.py --category ${category} --verbose
 StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=penguin-news-${category}
