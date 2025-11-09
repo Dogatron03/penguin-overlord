@@ -158,24 +158,40 @@ elif [ "$DEPLOYMENT_MODE" = "2" ]; then
     
     if docker images --format "{{.Repository}}" | grep -q "^${IMAGE_NAME}$"; then
         echo -e "${GREEN}✓${NC} Image exists"
-        read -p "Use existing? (Y/n) " -n 1 -r
-        echo
-        [[ $REPLY =~ ^[Nn]$ ]] && BUILD=true || BUILD=false
+        if [ "$SERVICE_EXISTS" = true ]; then
+            # If service exists, default to rebuilding to get latest code
+            read -p "Rebuild/pull latest image? (Y/n) " -n 1 -r
+            echo
+            [[ $REPLY =~ ^[Nn]$ ]] && BUILD=false || BUILD=true
+        else
+            # New install, ask if they want to use existing
+            read -p "Use existing? (Y/n) " -n 1 -r
+            echo
+            [[ $REPLY =~ ^[Nn]$ ]] && BUILD=true || BUILD=false
+        fi
     else
         BUILD=true
     fi
     
     if [ "$BUILD" = true ]; then
+        # Remove ALL old images - local AND GHCR cached
+        echo "Removing all old images..."
+        $DOCKER_CMD rmi -f $IMAGE_NAME:latest 2>/dev/null || true
+        $DOCKER_CMD rmi -f ghcr.io/chiefgyk3d/penguin-overlord:latest 2>/dev/null || true
+        
         echo "1) Build local  2) Pull from GHCR"
+        echo -e "${YELLOW}Note: GHCR only has code from 'main' branch. Use option 1 for dev branches.${NC}"
         read -p "Select [1-2]: " -n 1 -r SRC
         echo ""
         
         if [ "$SRC" = "2" ]; then
+            echo "Pulling fresh image from GHCR (main branch only)..."
             $DOCKER_CMD pull ghcr.io/chiefgyk3d/penguin-overlord:latest && \
             $DOCKER_CMD tag ghcr.io/chiefgyk3d/penguin-overlord:latest $IMAGE_NAME:latest
         else
             [ ! -f "$PROJECT_DIR/Dockerfile" ] && echo -e "${RED}Dockerfile not found${NC}" && exit 1
-            cd "$PROJECT_DIR" && $DOCKER_CMD build -t $IMAGE_NAME -f Dockerfile .
+            echo "Building fresh image with --no-cache..."
+            cd "$PROJECT_DIR" && $DOCKER_CMD build --no-cache --pull -t $IMAGE_NAME -f Dockerfile .
         fi
         echo -e "${GREEN}✓${NC} Image ready"
     fi
