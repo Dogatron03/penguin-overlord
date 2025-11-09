@@ -85,7 +85,7 @@ fi
 # Ask about news system optimization
 echo ""
 echo -e "${BLUE}News System Configuration:${NC}"
-echo "The bot includes news aggregation for 73 sources across 5 categories."
+echo "The bot includes news aggregation for 73+ sources across 8 categories."
 echo ""
 echo "Choose news fetching strategy:"
 echo -e "  1) ${GREEN}Integrated${NC} - News runs inside bot (simpler, 500MB RAM constant)"

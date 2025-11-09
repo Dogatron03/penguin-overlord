@@ -37,7 +37,10 @@ if [ "$IS_DOCKER" = true ] && command -v docker &> /dev/null; then
     if docker images --format "{{.Repository}}" | grep -q "^penguin-overlord$"; then
         read -p "Remove Docker image? (y/N) " -n 1 -r
         echo
-        [[ $REPLY =~ ^[Yy]$ ]] && docker rmi penguin-overlord && echo -e "${GREEN}✓${NC} Image removed"
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            docker rmi -f penguin-overlord 2>/dev/null || true
+            echo -e "${GREEN}✓${NC} Image removed"
+        fi
     fi
 fi
 
