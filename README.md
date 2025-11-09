@@ -110,7 +110,47 @@ Intelligence and monitoring resources!
 - `!sigint` - Get SIGINT monitoring resources and frequencies
 - `!sigintresources` - Comprehensive SIGINT resource list
 
-### 📅 Event Pinger
+### � Automated News Aggregation (92 sources, 8 categories)
+
+The bot features a comprehensive automated news system that aggregates and posts news from 92+ RSS feeds across 8 specialized categories!
+
+**News Categories:**
+- 🔒 **Cybersecurity** (18 sources) - TheHackerNews, WeLiveSecurity, Dark Reading, Malwarebytes, Wired Security, AWS Security, BleepingComputer, Schneier, and more
+- 💻 **Tech** (23 sources) - Ars Technica, The Verge, TechCrunch, Wired, Engadget, ZDNet, and more
+- 🎮 **Gaming** (17 sources) - IGN, Polygon, Kotaku, PC Gamer, GameSpot, and more
+- 🍎 **Apple & Google** (10 sources) - 9to5Mac, 9to5Google, MacRumors, Android Police, and more
+- 🛡️ **CVE Security** (6 sources) - National Vulnerability Database, CISA Alerts, Exploit-DB, and more
+- 🏛️ **US Legislation** (7 sources) - Congressional tech/privacy/security bills from Congress.gov
+- 🇪🇺 **EU Legislation** (3 sources) - EU tech regulation from EUR-Lex
+- 📰 **General News** (7 sources) - NPR, PBS, Financial Times, Reuters, and more
+
+**Manual Commands:**
+- `/news status` - Check configuration and enabled categories
+- `/news enable <category>` - Enable a news category
+- `/news disable <category>` - Disable a news category
+- `/news set_channel <category> <#channel>` - Set posting channel for a category
+- `/news test <category>` - Test fetch and post for a category
+
+**Automated Posting:**
+The bot uses systemd timers (or manual cron) to automatically fetch and post news at configured intervals:
+- Cybersecurity: Every 3 hours
+- Tech & Gaming: Every 4 hours
+- Apple/Google: Every 6 hours
+- CVE: Every hour
+- Legislation: Every 12 hours
+- General News: Every 2 hours
+
+**Features:**
+- ✅ Smart deduplication (no repeated posts)
+- ✅ HTML tag stripping and entity decoding
+- ✅ Discord-friendly embeds with source icons
+- ✅ Configurable per-category channels
+- ✅ State persistence across restarts
+- ✅ Concurrent feed fetching for performance
+
+See **[News System Guide](docs/features/NEWS_SYSTEM.md)** for complete setup instructions.
+
+### �📅 Event Pinger
 Never miss a cybersecurity conference or HAM radio event!
 - `!events [type]` - List upcoming events (cybersecurity/ham/all)
 - `!allevents [type]` - Paginated view of all events
@@ -233,10 +273,11 @@ penguin-overlord/
 │       └── docker-build-publish.yml  # Multi-arch Docker builds
 ├── penguin-overlord/
 │   ├── bot.py               # Main bot entry point
+│   ├── news_runner.py       # Standalone news fetcher for systemd
 │   ├── cogs/                # Bot extensions/features
 │   │   ├── xkcd.py          # XKCD commands
 │   │   ├── xkcd_poster.py   # Automated XKCD posting
-│   │   ├── comics.py        # Multi-source tech comics (Dilbert, CommitStrip, SMBC)
+│   │   ├── comics.py        # Multi-source tech comics
 │   │   ├── techquote.py     # Tech Quote commands (610+ quotes!)
 │   │   ├── admin.py         # Admin & help commands (6 pages)
 │   │   ├── cyberfortune.py  # Cyber fortune cookies
@@ -246,13 +287,26 @@ penguin-overlord/
 │   │   ├── planespotter.py  # Aviation frequencies
 │   │   ├── sigint.py        # SIGINT resources
 │   │   ├── eventpinger.py   # Event reminders (CSV-based)
-│   │   └── source_code.py   # GitHub link
+│   │   ├── source_code.py   # GitHub link
+│   │   ├── news_manager.py  # News admin commands (/news)
+│   │   ├── cybersecurity_news.py  # Cybersecurity feeds (18 sources)
+│   │   ├── tech_news.py     # Tech news feeds (23 sources)
+│   │   ├── gaming_news.py   # Gaming news feeds (17 sources)
+│   │   ├── apple_google.py  # Apple & Google news (10 sources)
+│   │   ├── cve.py           # CVE & security alerts (6 sources)
+│   │   ├── us_legislation.py  # US tech legislation (7 sources)
+│   │   ├── eu_legislation.py  # EU tech regulation (3 sources)
+│   │   └── general_news.py  # General news feeds (7 sources)
 │   ├── social/              # Social platform integrations
 │   │   ├── discord.py       # Discord webhook platform
 │   │   └── matrix.py        # Matrix platform (future)
-│   └── utils/               # Utility modules
-│       ├── config.py        # Configuration management
-│       └── secrets.py       # Secrets management (Doppler/AWS/Vault)
+│   ├── utils/               # Utility modules
+│   │   ├── config.py        # Configuration management
+│   │   ├── secrets.py       # Secrets management (Doppler/AWS/Vault)
+│   │   └── news_fetcher.py  # RSS feed fetching & HTML parsing
+│   └── data/                # Runtime state & configuration
+│       ├── news_config.json # News category configuration
+│       └── *_state.json     # Per-category state files
 ├── events/                  # Event CSV files
 │   └── security_and_ham_events_2026_with_types.csv
 ├── scripts/                 # Installation & management scripts
@@ -327,20 +381,22 @@ bandit -r penguin-overlord/ -ll
 safety check
 ```
 
-### Current Features (30 Commands, 10 Cogs)
-- ✅ XKCD comic integration with search
-- ✅ Tech Quote of the Day (610+ quotes from 70+ tech legends)
-- ✅ Interactive paginators (quotes, events, help)
-- ✅ Hybrid commands (both prefix and slash commands)
-- ✅ Doppler/AWS/Vault secrets management
-- ✅ Solar weather & HAM radio (NOAA APIs)
-- ✅ Aviation frequencies & SIGINT resources
-- ✅ Event reminder system (29 events, CSV-based)
-- ✅ Fun commands (fortune, manpage, patch gremlin)
-- ✅ 6-page paginated help system
-- ✅ Docker multi-arch support
-- ✅ CI/CD with GitHub Actions
-- ✅ systemd service support
+### Current Features (40+ Commands, 20+ Cogs)
+- ✅ **Automated News Aggregation** (92 sources, 8 categories)
+- ✅ **XKCD** comic integration with search & automated posting
+- ✅ **Tech Comics** (Joy of Tech, TurnOff.us, XKCD)
+- ✅ **Tech Quote of the Day** (610+ quotes from 70+ tech legends)
+- ✅ **Interactive paginators** (quotes, events, help)
+- ✅ **Hybrid commands** (both prefix and slash commands)
+- ✅ **Doppler/AWS/Vault** secrets management
+- ✅ **Solar weather & HAM radio** (NOAA APIs)
+- ✅ **Aviation frequencies & SIGINT resources**
+- ✅ **Event reminder system** (29 events, CSV-based)
+- ✅ **Fun commands** (fortune, manpage, patch gremlin)
+- ✅ **6-page paginated help system**
+- ✅ **Docker multi-arch support** (amd64, arm64)
+- ✅ **CI/CD with GitHub Actions**
+- ✅ **systemd service support** with timers
 
 ### Future Features
 - 🔲 Matrix bot integration
