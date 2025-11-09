@@ -74,13 +74,44 @@ if [ ! -f "$PROJECT_DIR/Dockerfile" ]; then
     exit 1
 fi
 
-# Check if buildx is available for cross-platform builds
-if ! docker buildx version &> /dev/null; then
-    echo -e "${YELLOW}Note: docker buildx not available, using standard build${NC}"
-    echo -e "${YELLOW}This will build for your current platform only${NC}"
-    USE_BUILDX=false
+# Detect current platform
+CURRENT_ARCH=$(uname -m)
+if [ "$CURRENT_ARCH" = "x86_64" ]; then
+    CURRENT_PLATFORM="amd64"
+elif [ "$CURRENT_ARCH" = "aarch64" ] || [ "$CURRENT_ARCH" = "arm64" ]; then
+    CURRENT_PLATFORM="arm64"
 else
+    CURRENT_PLATFORM="unknown"
+fi
+
+echo "Current machine: $CURRENT_PLATFORM"
+
+# Check if we need cross-compilation
+if [ "$ARCH_NAME" != "$CURRENT_PLATFORM" ]; then
+    echo -e "${YELLOW}Cross-compilation required: $CURRENT_PLATFORM → $ARCH_NAME${NC}"
+    
+    # Check if buildx is available
+    if ! docker buildx version &> /dev/null; then
+        echo -e "${RED}ERROR: Cross-compilation requires docker buildx${NC}"
+        echo ""
+        echo "Options:"
+        echo "  1. Install docker buildx (recommended):"
+        echo "     - Update Docker to version 19.03 or later"
+        echo "     - Or install buildx plugin manually"
+        echo ""
+        echo "  2. Build directly on target machine:"
+        echo "     - SSH to $REMOTE_HOST"
+        echo "     - Run: docker build -t penguin-overlord ."
+        echo ""
+        echo "  3. Use a different build machine with matching architecture"
+        echo ""
+        exit 1
+    fi
+    
     USE_BUILDX=true
+else
+    echo "Native build (no cross-compilation needed)"
+    USE_BUILDX=false
 fi
 
 # Build the image
@@ -90,6 +121,15 @@ cd "$PROJECT_DIR"
 if [ "$USE_BUILDX" = true ]; then
     # Use buildx for cross-platform builds
     echo "Using docker buildx for cross-platform build..."
+    
+    # Create builder instance if it doesn't exist
+    if ! docker buildx ls | grep -q "multiarch"; then
+        echo "Creating buildx builder instance..."
+        docker buildx create --name multiarch --use
+    else
+        docker buildx use multiarch
+    fi
+    
     docker buildx build --platform $PLATFORM --load --no-cache --pull -t $IMAGE_NAME .
 else
     # Standard build (native platform only)
