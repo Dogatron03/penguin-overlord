@@ -68,13 +68,34 @@ class StandaloneNewsRunner:
     def _load_config(self) -> dict:
         """Load news configuration."""
         config_file = self.project_root / 'data/news_config.json'
+        config = {}
+        
         if config_file.exists():
             try:
                 with open(config_file, 'r') as f:
-                    return json.load(f)
+                    config = json.load(f)
             except Exception as e:
                 logger.error(f"Failed to load config: {e}")
-        return {}
+        
+        # Override channel_id with environment variable if set
+        # This allows Doppler/env vars to work even without config file
+        env_var_name = f"NEWS_{self.category.upper()}_CHANNEL_ID"
+        channel_id_str = os.getenv(env_var_name)
+        
+        if channel_id_str and channel_id_str.isdigit():
+            logger.info(f"Using channel ID from environment: {env_var_name}={channel_id_str}")
+            # Ensure category exists in config
+            if self.category not in config:
+                config[self.category] = {
+                    'enabled': False,
+                    'channel_id': None,
+                    'interval_hours': 3,
+                    'sources': {},
+                    'concurrency_limit': 5
+                }
+            config[self.category]['channel_id'] = int(channel_id_str)
+        
+        return config
     
     def _get_sources(self) -> dict:
         """Get news sources for category."""

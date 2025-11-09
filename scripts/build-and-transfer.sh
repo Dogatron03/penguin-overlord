@@ -15,6 +15,7 @@ NC='\033[0m'
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 IMAGE_NAME="penguin-overlord"
+BRANCH=$(cd "$PROJECT_DIR" && git branch --show-current)
 
 # Parse arguments
 REMOTE_HOST="${1}"
@@ -92,20 +93,50 @@ if [ "$ARCH_NAME" != "$CURRENT_PLATFORM" ]; then
     
     # Check if buildx is available
     if ! docker buildx version &> /dev/null; then
-        echo -e "${RED}ERROR: Cross-compilation requires docker buildx${NC}"
+        echo -e "${YELLOW}Docker buildx not available - cannot cross-compile${NC}"
         echo ""
-        echo "Options:"
-        echo "  1. Install docker buildx (recommended):"
-        echo "     - Update Docker to version 19.03 or later"
-        echo "     - Or install buildx plugin manually"
+        echo "Would you like to transfer the code and build on the target machine instead?"
+        echo "  Pro: No buildx needed, native ARM64 build"
+        echo "  Con: Takes 15-30 minutes on Raspberry Pi"
         echo ""
-        echo "  2. Build directly on target machine:"
-        echo "     - SSH to $REMOTE_HOST"
-        echo "     - Run: docker build -t penguin-overlord ."
+        read -p "Transfer code and build on target? (Y/n) " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Nn]$ ]]; then
+            echo ""
+            echo "To enable cross-compilation, install docker buildx:"
+            echo "  1. Update Docker to version 19.03+"
+            echo "  2. Or install: https://github.com/docker/buildx"
+            exit 1
+        fi
+        
+        # Transfer code instead
+        echo -e "${BLUE}Transferring code to $REMOTE_HOST...${NC}"
+        
+        # Ensure target has latest code
+        ssh "$REMOTE_USER@$REMOTE_HOST" "cd ~/penguin-overlord && git fetch origin $BRANCH && git checkout $BRANCH && git pull origin $BRANCH" || {
+            echo -e "${RED}Failed to update code on target${NC}"
+            exit 1
+        }
+        
+        echo -e "${GREEN}✓${NC} Code updated on target"
         echo ""
-        echo "  3. Use a different build machine with matching architecture"
+        echo -e "${BLUE}Building on $REMOTE_HOST (this will take 15-30 minutes)...${NC}"
+        
+        ssh "$REMOTE_USER@$REMOTE_HOST" "cd ~/penguin-overlord && docker build --no-cache -t penguin-overlord ." || {
+            echo -e "${RED}Build failed on target${NC}"
+            exit 1
+        }
+        
+        echo -e "${GREEN}✓${NC} Build complete on target"
         echo ""
-        exit 1
+        echo -e "${GREEN}=== Next Steps ===${NC}"
+        echo ""
+        echo "Run the installer on target:"
+        echo -e "  ${YELLOW}ssh $REMOTE_USER@$REMOTE_HOST${NC}"
+        echo -e "  ${YELLOW}cd ~/penguin-overlord${NC}"
+        echo -e "  ${YELLOW}sudo bash scripts/install-systemd.sh${NC}"
+        echo ""
+        exit 0
     fi
     
     USE_BUILDX=true
