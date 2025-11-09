@@ -201,7 +201,7 @@ class Admin(commands.Cog):
             ),
             inline=False
         )
-        embed.set_footer(text="Page 1 of 5 • Use buttons to navigate")
+        embed.set_footer(text="Page 1 of 6 • Use buttons to navigate")
         embeds.append(embed)
         
         # Page 2: Tech Quote Commands
@@ -232,7 +232,7 @@ class Admin(commands.Cog):
                   "• And many more pioneers of computing!",
             inline=False
         )
-        embed.set_footer(text="Page 2 of 5 • Use buttons to navigate")
+        embed.set_footer(text="Page 2 of 6 • Use buttons to navigate")
         embeds.append(embed)
         
         # Page 3: Fun Commands
@@ -256,7 +256,7 @@ class Admin(commands.Cog):
             value="`!patchgremlin` - Chaotic reminders about system updates",
             inline=False
         )
-        embed.set_footer(text="Page 3 of 5 • Use buttons to navigate")
+        embed.set_footer(text="Page 3 of 6 • Use buttons to navigate")
         embeds.append(embed)
         
         # Page 4: HAM Radio, Aviation & SIGINT Commands
@@ -294,10 +294,50 @@ class Admin(commands.Cog):
             ),
             inline=False
         )
-        embed.set_footer(text="Page 4 of 5 • Use buttons to navigate")
+        embed.set_footer(text="Page 4 of 6 • Use buttons to navigate")
         embeds.append(embed)
         
-        # Page 5: General Info and Admin
+        # Page 5: Event Pinger - Cybersecurity Conferences
+        embed = discord.Embed(
+            title="🐧 Penguin Overlord - Help",
+            description="Event Pinger - Cybersecurity conference reminders!",
+            color=0x5865F2
+        )
+        embed.add_field(
+            name="📅 Event Pinger Commands",
+            value=(
+                "`!events [days] [type]` - List upcoming events (default: 30 days, all types)\n"
+                "`!allevents [type]` - Browse ALL events with pagination (interactive)\n"
+                "`!nextevent` - Get the next upcoming event with countdown\n"
+                "`!searchevent [query]` - Search events by name or location"
+            ),
+            inline=False
+        )
+        embed.add_field(
+            name="🔐 Tracked Events",
+            value=(
+                "**Cybersecurity:** DEF CON, GrrCON, BSides conferences\n"
+                "**Ham Radio:** Hamvention, HamCation, SEA-PAC, and more!\n"
+                "• Automatically filters out past events\n"
+                "• Shows confirmed vs estimated dates"
+            ),
+            inline=False
+        )
+        embed.add_field(
+            name="💡 Examples",
+            value=(
+                "`!events` - Show events in next 30 days (limited to 10)\n"
+                "`!allevents` - Browse ALL events with pagination\n"
+                "`!allevents ham` - Browse all ham radio events\n"
+                "`!events 60 cybersecurity` - Cybersecurity events in 60 days\n"
+                "`!searchevent Dayton` - Find Dayton Hamvention"
+            ),
+            inline=False
+        )
+        embed.set_footer(text="Page 5 of 6 • Use buttons to navigate")
+        embeds.append(embed)
+        
+        # Page 6: General Info and Admin
         embed = discord.Embed(
             title="🐧 Penguin Overlord - Help",
             description="Additional information and admin commands",
@@ -336,7 +376,7 @@ class Admin(commands.Cog):
             ),
             inline=False
         )
-        embed.set_footer(text="Page 5 of 5 • Made with 🐧 and ❤️")
+        embed.set_footer(text="Page 6 of 6 • Made with 🐧 and ❤️")
         embeds.append(embed)
         
         # Create paginator view and send
