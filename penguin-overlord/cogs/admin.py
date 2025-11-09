@@ -80,6 +80,29 @@ class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
+    @commands.command(name='listcogs', hidden=True)
+    @commands.is_owner()
+    async def listcogs(self, ctx: commands.Context):
+        """
+        List all loaded cogs and their commands (owner only).
+        
+        Usage:
+            !listcogs
+        """
+        cog_info = []
+        for name, cog in self.bot.cogs.items():
+            commands_list = [cmd.name for cmd in cog.get_commands()]
+            cog_info.append(f"**{name}**: {len(commands_list)} command(s)")
+            cog_info.append(f"  └─ {', '.join(commands_list) if commands_list else '(no commands)'}")
+        
+        embed = discord.Embed(
+            title="🔧 Loaded Cogs",
+            description="\n".join(cog_info) if cog_info else "No cogs loaded",
+            color=0x5865F2
+        )
+        embed.set_footer(text=f"Total: {len(self.bot.cogs)} cog(s)")
+        await ctx.send(embed=embed)
+    
     @commands.command(name='sync', hidden=True)
     @commands.is_owner()
     async def sync(self, ctx: commands.Context):
