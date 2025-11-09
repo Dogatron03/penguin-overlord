@@ -82,6 +82,29 @@ if [ "$SKIP_MODE_PROMPT" != "true" ]; then
     [[ ! $DEPLOYMENT_MODE =~ ^[1-2]$ ]] && echo -e "${RED}Invalid option${NC}" && exit 1
 fi
 
+# Ask about news system optimization
+echo ""
+echo -e "${BLUE}News System Configuration:${NC}"
+echo "The bot includes news aggregation for 73 sources across 5 categories."
+echo ""
+echo "Choose news fetching strategy:"
+echo "  1) ${GREEN}Integrated${NC} - News runs inside bot (simpler, 500MB RAM constant)"
+echo "  2) ${GREEN}Optimized${NC}  - Separate systemd timers (99% less bandwidth, 0MB idle)"
+echo ""
+read -p "Select [1-2] (default: 1): " -n 1 -r NEWS_MODE
+echo ""
+NEWS_MODE="${NEWS_MODE:-1}"
+
+[[ ! $NEWS_MODE =~ ^[1-2]$ ]] && echo -e "${YELLOW}Invalid option, using integrated mode${NC}" && NEWS_MODE="1"
+
+if [ "$NEWS_MODE" = "2" ]; then
+    echo -e "${GREEN}✓${NC} Will deploy optimized news timers"
+    DEPLOY_NEWS_TIMERS=true
+else
+    echo -e "${GREEN}✓${NC} News will run integrated in bot"
+    DEPLOY_NEWS_TIMERS=false
+fi
+
 if [ ! -f "$PROJECT_DIR/.env" ]; then
     echo -e "${YELLOW}WARNING: .env not found!${NC}"
     echo "Create .env with DISCORD_TOKEN before starting"
@@ -223,6 +246,102 @@ fi
 
 echo -e "${GREEN}✓${NC} Service file created"
 
+# Deploy news timers if optimized mode selected
+if [ "$DEPLOY_NEWS_TIMERS" = true ]; then
+    echo ""
+    echo -e "${BLUE}Deploying Optimized News Timers...${NC}"
+    
+    # Function to create news service
+    create_news_service() {
+        local category=$1
+        local service_file="/etc/systemd/system/penguin-news-${category}.service"
+        
+        # Determine work directory
+        if [ -f "$PROJECT_DIR/penguin-overlord/bot.py" ]; then
+            WORK_DIR="$PROJECT_DIR/penguin-overlord"
+        else
+            WORK_DIR="$PROJECT_DIR"
+        fi
+        
+        cat > "$service_file" << EOF
+[Unit]
+Description=Penguin Bot News Fetcher - ${category}
+After=network.target
+
+[Service]
+Type=oneshot
+User=$ACTUAL_USER
+Group=$ACTUAL_USER
+WorkingDirectory=$WORK_DIR
+ExecStart=/usr/bin/python3 $PROJECT_DIR/scripts/news_runner.py --category ${category}
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=penguin-news-${category}
+
+# Resource limits
+MemoryMax=256M
+CPUQuota=50%
+TasksMax=50
+TimeoutStartSec=120
+
+[Install]
+WantedBy=multi-user.target
+EOF
+        echo "  ✓ Created penguin-news-${category}.service"
+    }
+    
+    # Function to create news timer
+    create_news_timer() {
+        local category=$1
+        local calendar=$2
+        local timer_file="/etc/systemd/system/penguin-news-${category}.timer"
+        
+        cat > "$timer_file" << EOF
+[Unit]
+Description=Penguin Bot ${category^} News Fetcher Timer
+Requires=penguin-news-${category}.service
+
+[Timer]
+OnCalendar=$calendar
+Persistent=true
+AccuracySec=1min
+
+[Install]
+WantedBy=timers.target
+EOF
+        echo "  ✓ Created penguin-news-${category}.timer"
+    }
+    
+    # Create all news services and timers
+    create_news_service "cve"
+    create_news_timer "cve" "*-*-* 00,06,12,18:00:00"
+    
+    create_news_service "cybersecurity"
+    create_news_timer "cybersecurity" "*-*-* 00,03,06,09,12,15,18,21:01:00"
+    
+    create_news_service "tech"
+    create_news_timer "tech" "*-*-* 00,04,08,12,16,20:30:00"
+    
+    create_news_service "gaming"
+    create_news_timer "gaming" "*-*-* */2:15:00"
+    
+    create_news_service "apple_google"
+    create_news_timer "apple_google" "*-*-* 00,03,06,09,12,15,18,21:45:00"
+    
+    echo -e "${GREEN}✓${NC} All news timers created"
+    
+    # Enable and start timers
+    read -p "Enable and start news timers? (Y/n) " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+        for category in cve cybersecurity tech gaming apple_google; do
+            systemctl enable penguin-news-${category}.timer 2>/dev/null
+            systemctl start penguin-news-${category}.timer 2>/dev/null
+        done
+        echo -e "${GREEN}✓${NC} News timers enabled and started"
+    fi
+fi
+
 systemctl daemon-reload
 echo -e "${GREEN}✓${NC} systemd reloaded"
 
@@ -265,6 +384,29 @@ fi
 echo ""
 echo -e "${GREEN}Installation Complete!${NC}"
 echo ""
-echo "Commands:"
+echo "Main Bot Commands:"
 echo "  sudo systemctl start|stop|restart|status penguin-overlord"
 echo "  sudo journalctl -u penguin-overlord -f"
+
+if [ "$DEPLOY_NEWS_TIMERS" = true ]; then
+    echo ""
+    echo -e "${BLUE}News Timer Commands:${NC}"
+    echo "  sudo systemctl list-timers penguin-news-*           # View schedule"
+    echo "  sudo systemctl status penguin-news-cybersecurity    # Check status"
+    echo "  sudo journalctl -u penguin-news-tech -f             # View logs"
+    echo "  sudo systemctl start penguin-news-cve.service       # Manual run"
+    echo ""
+    echo -e "${YELLOW}Note: Configure news channels in Discord:${NC}"
+    echo "  /news set_channel cybersecurity #security-news"
+    echo "  /news set_channel tech #tech-news"
+    echo "  /news set_channel gaming #gaming-news"
+    echo "  /news set_channel apple_google #apple-google-news"
+    echo "  /news set_channel cve #security-alerts"
+    echo ""
+    echo -e "${GREEN}News Schedule:${NC}"
+    echo "  CVE:           Every 6 hours at :00"
+    echo "  Cybersecurity: Every 3 hours at :01"
+    echo "  Tech:          Every 4 hours at :30"
+    echo "  Gaming:        Every 2 hours at :15"
+    echo "  Apple/Google:  Every 3 hours at :45"
+fi

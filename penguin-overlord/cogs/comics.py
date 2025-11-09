@@ -50,21 +50,21 @@ class Comics(commands.Cog):
         self.bot = bot
         self.session = None
         self._session_lock = asyncio.Lock()
+        self.state_file = Path(self.STATE_PATH)
         
         # Ensure data directory exists
-        state_file = Path(self.STATE_PATH)
-        state_file.parent.mkdir(parents=True, exist_ok=True)
+        self.state_file.parent.mkdir(parents=True, exist_ok=True)
         
         # Load or initialize state
-        if state_file.exists():
+        if self.state_file.exists():
             try:
-                with state_file.open('r', encoding='utf-8') as fh:
+                with open(self.state_file, 'r') as fh:
                     self.state = json.load(fh)
             except Exception:
                 logger.exception('Failed to load comic state file; resetting')
-                self.state = {'last_posted': None, 'channel_id': None, 'enabled': True, 'source': 'random'}
+                self.state = {'last_posted': None, 'channel_id': None, 'enabled': False, 'source': 'random'}
         else:
-            self.state = {'last_posted': None, 'channel_id': None, 'enabled': True, 'source': 'random'}
+            self.state = {'last_posted': None, 'channel_id': None, 'enabled': False, 'source': 'random'}
             self._write_state()
         
         # Optionally allow env var to override channel

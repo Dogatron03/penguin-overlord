@@ -39,20 +39,21 @@ class XKCDPoster(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.poll_minutes = int(os.getenv('XKCD_POLL_INTERVAL_MINUTES', '30'))
+        self.state_file = Path(self.STATE_PATH)
+        
         # Ensure data directory exists
-        state_file = Path(self.STATE_PATH)
-        state_file.parent.mkdir(parents=True, exist_ok=True)
+        self.state_file.parent.mkdir(parents=True, exist_ok=True)
 
         # Load or initialize state
-        if state_file.exists():
+        if self.state_file.exists():
             try:
-                with state_file.open('r', encoding='utf-8') as fh:
+                with open(self.state_file, 'r') as fh:
                     self.state = json.load(fh)
             except Exception:
                 logger.exception('Failed to load XKCD state file; resetting')
-                self.state = {'last_posted': 0, 'channel_id': None, 'enabled': True}
+                self.state = {'last_posted': 0, 'channel_id': None, 'enabled': False}
         else:
-            self.state = {'last_posted': 0, 'channel_id': None, 'enabled': True}
+            self.state = {'last_posted': 0, 'channel_id': None, 'enabled': False}
             self._write_state()
 
         # Optionally allow env var to override channel

@@ -98,15 +98,28 @@ class Radiohead(commands.Cog):
         try:
             if os.path.exists(self.state_file):
                 with open(self.state_file, 'r') as f:
-                    return json.load(f)
+                    state = json.load(f)
+            else:
+                state = {
+                    'last_posted': None,
+                    'channel_id': None,
+                    'enabled': False
+                }
         except Exception as e:
             logger.error(f"Error loading solar state: {e}")
+            state = {
+                'last_posted': None,
+                'channel_id': None,
+                'enabled': False
+            }
         
-        return {
-            'last_posted': None,
-            'channel_id': None,
-            'enabled': False
-        }
+        # Check for environment variable override
+        env_chan = os.getenv('SOLAR_POST_CHANNEL_ID')
+        if env_chan and env_chan.isdigit():
+            state['channel_id'] = int(env_chan)
+            logger.info(f"Using solar channel from environment: {env_chan}")
+        
+        return state
     
     def _save_state(self):
         """Save solar poster state to file."""
@@ -194,121 +207,18 @@ class Radiohead(commands.Cog):
         
         await ctx.send(embed=embed)
     
-    @commands.hybrid_command(name='propagation', description='Get current HF propagation conditions')
+    @commands.hybrid_command(name='propagation', description='Get current HF propagation conditions (alias for !solar)')
     async def propagation(self, ctx: commands.Context):
         """
         Get current HF propagation conditions from NOAA Space Weather.
+        This is an alias for the !solar command.
         
         Usage:
             !propagation
             /propagation
         """
-        await ctx.defer()
-        
-        try:
-            # Fetch space weather data from NOAA
-            async with self.session.get('https://services.swpc.noaa.gov/products/noaa-scales.json') as resp:
-                if resp.status == 200:
-                    data = await resp.json()
-                    
-                    # Get current conditions
-                    current = data.get('0', {}) if isinstance(data, dict) else data[0] if data else {}
-                    
-                    embed = discord.Embed(
-                        title="📡 Current HF Propagation Conditions",
-                        description="Live data from NOAA Space Weather Prediction Center",
-                        color=0x1E88E5,
-                        timestamp=datetime.utcnow()
-                    )
-                    
-                    # Space weather scales
-                    r_scale = current.get('R', {}).get('Scale', 'N/A')
-                    s_scale = current.get('S', {}).get('Scale', 'N/A')
-                    g_scale = current.get('G', {}).get('Scale', 'N/A')
-                    
-                    embed.add_field(
-                        name="🌟 Radio Blackout (R-Scale)",
-                        value=f"Current: R{r_scale}\nR0=None, R5=Extreme",
-                        inline=True
-                    )
-                    
-                    embed.add_field(
-                        name="☀️ Solar Radiation Storm (S-Scale)",
-                        value=f"Current: S{s_scale}\nS0=None, S5=Extreme",
-                        inline=True
-                    )
-                    
-                    embed.add_field(
-                        name="🧲 Geomagnetic Storm (G-Scale)",
-                        value=f"Current: G{g_scale}\nG0=None, G5=Extreme",
-                        inline=True
-                    )
-                    
-                    # Interpretation
-                    interpretation = []
-                    if r_scale == 'R0' or r_scale == 'N/A':
-                        interpretation.append("✅ No radio blackouts - HF bands open!")
-                    else:
-                        interpretation.append(f"⚠️ R{r_scale} blackout - HF may be degraded")
-                    
-                    if g_scale == 'G0' or g_scale == 'N/A':
-                        interpretation.append("✅ Geomagnetic field calm")
-                    elif int(g_scale.replace('G', '')) >= 3:
-                        interpretation.append(f"🌈 G{g_scale} storm - possible aurora!")
-                    else:
-                        interpretation.append(f"⚠️ G{g_scale} storm - degraded propagation")
-                    
-                    embed.add_field(
-                        name="📊 Interpretation",
-                        value="\n".join(interpretation),
-                        inline=False
-                    )
-                    
-                    embed.add_field(
-                        name="💡 Quick Tips",
-                        value="• Lower bands (80m/40m) work better during storms\n"
-                              "• Higher bands (20m/15m/10m) need calm conditions\n"
-                              "• Check !hamradio for more propagation tips",
-                        inline=False
-                    )
-                    
-                    embed.set_footer(text="73! • Data from NOAA SWPC • Updates every 15 minutes")
-                    
-                    await ctx.send(embed=embed)
-                else:
-                    await ctx.send("❌ Unable to fetch propagation data from NOAA. Try again later!")
-                    
-        except Exception as e:
-            logger.error(f"Error fetching propagation data: {e}")
-            
-            # Fallback to general advice
-            embed = discord.Embed(
-                title="📡 HF Propagation Tips",
-                description="Unable to fetch live data, here's general propagation advice:",
-                color=0x1E88E5
-            )
-            
-            embed.add_field(
-                name="Day Bands",
-                value="20m, 17m, 15m, 12m, 10m\nBest for DX during daylight",
-                inline=True
-            )
-            
-            embed.add_field(
-                name="Night Bands",
-                value="80m, 40m, 30m\nBest for regional to DX at night",
-                inline=True
-            )
-            
-            embed.add_field(
-                name="All-Around",
-                value="40m works day and night!\nMost reliable band.",
-                inline=True
-            )
-            
-            embed.set_footer(text="73! • Try !hamradio for more tips")
-            
-            await ctx.send(embed=embed)
+        # Redirect to solar command
+        await self.solar(ctx)
     
     @commands.hybrid_command(name='solar', description='Get detailed solar weather report and band predictions')
     async def solar(self, ctx: commands.Context):

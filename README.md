@@ -448,6 +448,26 @@ If you find Penguin Overlord useful, consider supporting development:
 
 Made with ❤️ by [ChiefGyk3D](https://github.com/ChiefGyk3D)
 
+## 📚 Documentation
+
+Complete documentation is available in the [`docs/`](docs/) directory:
+
+- **[Full Documentation Index](docs/README.md)** - Complete navigation guide
+- **[Quick Reference](QUICK_REFERENCE.md)** - Fast command lookup
+- **[Setup Guides](docs/setup/)** - Discord setup, permissions, configuration
+- **[Feature Guides](docs/features/)** - News system, HAM radio, and more
+- **[Deployment](docs/deployment/)** - Production deployment and systemd
+- **[Reference](docs/reference/)** - Channel configuration, RSS feeds, optimization
+- **[Migration](docs/migration/)** - Breaking changes and upgrade guides
+
+### Quick Links
+- 🚀 **[Getting Started](docs/setup/DISCORD_SETUP.md)**
+- 🔒 **[Secrets Management](docs/secrets/README.md)**
+- 📰 **[News System Guide](docs/features/NEWS_SYSTEM.md)**
+- ⚙️ **[Channel Configuration](docs/reference/CHANNEL_CONFIGURATION.md)**
+
+---
+
 ## Author & Socials
 
 <table>
