@@ -88,8 +88,8 @@ echo -e "${BLUE}News System Configuration:${NC}"
 echo "The bot includes news aggregation for 73 sources across 5 categories."
 echo ""
 echo "Choose news fetching strategy:"
-echo "  1) ${GREEN}Integrated${NC} - News runs inside bot (simpler, 500MB RAM constant)"
-echo "  2) ${GREEN}Optimized${NC}  - Separate systemd timers (99% less bandwidth, 0MB idle)"
+echo -e "  1) ${GREEN}Integrated${NC} - News runs inside bot (simpler, 500MB RAM constant)"
+echo -e "  2) ${GREEN}Optimized${NC}  - Separate systemd timers (99% less bandwidth, 0MB idle)"
 echo ""
 read -p "Select [1-2] (default: 1): " -n 1 -r NEWS_MODE
 echo ""
@@ -345,19 +345,22 @@ fi
 systemctl daemon-reload
 echo -e "${GREEN}✓${NC} systemd reloaded"
 
+echo ""
+echo -e "${BLUE}Main Bot Service Configuration:${NC}"
+
 # Check if service was previously enabled
 WAS_ENABLED=false
 if systemctl is-enabled --quiet penguin-overlord.service 2>/dev/null; then
     WAS_ENABLED=true
     echo -e "${GREEN}✓${NC} Service already enabled"
 else
-    read -p "Enable on boot? (Y/n) " -n 1 -r
+    read -p "Enable penguin-overlord.service on boot? (Y/n) " -n 1 -r
     echo
     [[ ! $REPLY =~ ^[Nn]$ ]] && systemctl enable penguin-overlord.service && echo -e "${GREEN}✓${NC} Enabled" && WAS_ENABLED=true
 fi
 
 # If we stopped the service earlier or it wasn't running, ask about starting
-read -p "Start/restart service now? (Y/n) " -n 1 -r
+read -p "Start/restart penguin-overlord.service now? (Y/n) " -n 1 -r
 echo
 if [[ ! $REPLY =~ ^[Nn]$ ]]; then
     echo "Starting penguin-overlord service..."

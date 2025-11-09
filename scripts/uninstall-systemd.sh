@@ -46,6 +46,34 @@ systemctl is-enabled --quiet penguin-overlord.service 2>/dev/null && systemctl d
 rm -f "$SERVICE_FILE"
 echo -e "${GREEN}✓${NC} Service file removed"
 
+# Check for and remove news timer services
+NEWS_CATEGORIES=("cve" "cybersecurity" "tech" "gaming" "apple_google")
+TIMER_COUNT=0
+
+for category in "${NEWS_CATEGORIES[@]}"; do
+    TIMER_FILE="/etc/systemd/system/penguin-news-${category}.timer"
+    SERVICE_FILE_NEWS="/etc/systemd/system/penguin-news-${category}.service"
+    
+    if [ -f "$TIMER_FILE" ] || [ -f "$SERVICE_FILE_NEWS" ]; then
+        # Stop and disable timer if running
+        if systemctl is-active --quiet "penguin-news-${category}.timer" 2>/dev/null; then
+            systemctl stop "penguin-news-${category}.timer" 2>/dev/null || true
+        fi
+        
+        if systemctl is-enabled --quiet "penguin-news-${category}.timer" 2>/dev/null; then
+            systemctl disable "penguin-news-${category}.timer" 2>/dev/null || true
+        fi
+        
+        # Remove files
+        rm -f "$TIMER_FILE" "$SERVICE_FILE_NEWS"
+        TIMER_COUNT=$((TIMER_COUNT + 1))
+    fi
+done
+
+if [ $TIMER_COUNT -gt 0 ]; then
+    echo -e "${GREEN}✓${NC} Removed $TIMER_COUNT news timer(s)"
+fi
+
 systemctl daemon-reload
 systemctl reset-failed
 echo -e "${GREEN}✓${NC} systemd reloaded"
