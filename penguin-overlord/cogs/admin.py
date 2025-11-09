@@ -99,6 +99,52 @@ class Admin(commands.Cog):
             await ctx.send(f"❌ Failed to sync commands: {e}")
             logger.error(f"Manual sync failed: {e}")
     
+    @commands.hybrid_command(name='source_code', description='Get the link to the bot source code')
+    async def source_code(self, ctx: commands.Context):
+        """
+        Get the link to the Penguin Overlord source code on GitHub.
+        
+        Usage:
+            !source_code
+            /source_code
+        """
+        embed = discord.Embed(
+            title="🐧 Penguin Overlord - Source Code",
+            description="Penguin Overlord is open source! Check out the code, contribute, or report issues.",
+            color=0x5865F2,
+            url="https://github.com/ChiefGyk3D/penguin-overlord"
+        )
+        
+        embed.add_field(
+            name="📦 Repository",
+            value="[github.com/ChiefGyk3D/penguin-overlord](https://github.com/ChiefGyk3D/penguin-overlord)",
+            inline=False
+        )
+        
+        embed.add_field(
+            name="✨ Features",
+            value=(
+                "• 610+ tech quotes from 70+ legends\n"
+                "• XKCD comic integration\n"
+                "• Cyber fortune cookies\n"
+                "• 250+ Linux command references\n"
+                "• Patch Gremlin reminders"
+            ),
+            inline=False
+        )
+        
+        embed.add_field(
+            name="🤝 Contribute",
+            value="Pull requests and issues are welcome!\n"
+                  "[Open an Issue](https://github.com/ChiefGyk3D/penguin-overlord/issues) | "
+                  "[Submit a PR](https://github.com/ChiefGyk3D/penguin-overlord/pulls)",
+            inline=False
+        )
+        
+        embed.set_footer(text="Made with 🐧 and ❤️ • Licensed under MPL 2.0")
+        
+        await ctx.send(embed=embed)
+    
     @commands.command(name='help')
     async def help_command(self, ctx: commands.Context, *, command: str = None):
         """
@@ -220,7 +266,8 @@ class Admin(commands.Cog):
             name="ℹ️ General Commands",
             value=(
                 "`!help` - Show this help message\n"
-                "`!help [command]` - Get detailed help for a command"
+                "`!help [command]` - Get detailed help for a command\n"
+                "`!source_code` - Get link to GitHub repository"
             ),
             inline=False
         )
