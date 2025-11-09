@@ -14,6 +14,7 @@ from discord import app_commands
 import json
 import os
 from typing import Optional, Literal
+from utils.secrets import get_secret
 
 logger = logging.getLogger(__name__)
 
@@ -27,12 +28,17 @@ class NewsManager(commands.Cog):
         self.config = self._load_config()
     
     def _get_channel_id_from_env(self, category: str) -> Optional[int]:
-        """Get channel ID from environment variable if set."""
-        env_var_name = f"NEWS_{category.upper()}_CHANNEL_ID"
-        channel_id_str = os.getenv(env_var_name)
+        """Get channel ID from environment variable or secrets manager."""
+        # Try secrets manager first (Doppler/AWS/Vault)
+        channel_id_str = get_secret('NEWS', f'{category.upper()}_CHANNEL_ID')
         
-        if channel_id_str and channel_id_str.isdigit():
-            logger.info(f"Using channel ID from environment for {category}: {channel_id_str}")
+        # Fallback to direct env var if not in secrets manager
+        if not channel_id_str:
+            env_var_name = f"NEWS_{category.upper()}_CHANNEL_ID"
+            channel_id_str = os.getenv(env_var_name)
+        
+        if channel_id_str and str(channel_id_str).isdigit():
+            logger.info(f"Using channel ID from secrets for {category}: {channel_id_str}")
             return int(channel_id_str)
         
         return None

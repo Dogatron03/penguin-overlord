@@ -36,6 +36,7 @@ sys.path.insert(0, str(project_root / "penguin-overlord"))
 import discord
 from discord.ext import commands
 from utils.news_fetcher import OptimizedNewsFetcher
+from utils.secrets import get_secret
 
 # Configure logging
 logging.basicConfig(
@@ -77,13 +78,17 @@ class StandaloneNewsRunner:
             except Exception as e:
                 logger.error(f"Failed to load config: {e}")
         
-        # Override channel_id with environment variable if set
-        # This allows Doppler/env vars to work even without config file
-        env_var_name = f"NEWS_{self.category.upper()}_CHANNEL_ID"
-        channel_id_str = os.getenv(env_var_name)
+        # Override channel_id from secrets manager (Doppler/AWS/Vault) or environment
+        # Try secrets manager first (Doppler recommended for production)
+        channel_id_str = get_secret('NEWS', f'{self.category.upper()}_CHANNEL_ID')
         
-        if channel_id_str and channel_id_str.isdigit():
-            logger.info(f"Using channel ID from environment: {env_var_name}={channel_id_str}")
+        # Fallback to direct env var if not in secrets manager
+        if not channel_id_str:
+            env_var_name = f"NEWS_{self.category.upper()}_CHANNEL_ID"
+            channel_id_str = os.getenv(env_var_name)
+        
+        if channel_id_str and str(channel_id_str).isdigit():
+            logger.info(f"Using channel ID from secrets for {self.category}: {channel_id_str}")
             # Ensure category exists in config
             if self.category not in config:
                 config[self.category] = {
@@ -147,17 +152,15 @@ class StandaloneNewsRunner:
             logger.warning(f"No channel configured for {self.category}")
             return
         
-        # Load bot token
-        token = os.getenv('DISCORD_TOKEN')
+        # Load bot token from secrets manager (Doppler/AWS/Vault) or env
+        token = get_secret('DISCORD', 'BOT_TOKEN')
         if not token:
-            # Try loading from secrets
-            try:
-                sys.path.insert(0, str(Path(__file__).parent.parent / 'utils'))
-                from secrets import load_secret
-                token = load_secret('discord_token')
-            except:
-                logger.error("No Discord token found")
-                return
+            # Fallback to direct env var
+            token = os.getenv('DISCORD_BOT_TOKEN') or os.getenv('DISCORD_TOKEN')
+        
+        if not token:
+            logger.error("No Discord token found in secrets or environment")
+            return
         
         # Get sources
         all_sources = self._get_sources()
