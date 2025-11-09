@@ -47,7 +47,7 @@ rm -f "$SERVICE_FILE"
 echo -e "${GREEN}✓${NC} Service file removed"
 
 # Check for and remove news timer services
-NEWS_CATEGORIES=("cve" "cybersecurity" "tech" "gaming" "apple_google")
+NEWS_CATEGORIES=("cve" "cybersecurity" "tech" "gaming" "apple_google" "us_legislation" "eu_legislation" "general_news")
 TIMER_COUNT=0
 
 for category in "${NEWS_CATEGORIES[@]}"; do

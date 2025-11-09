@@ -54,7 +54,10 @@ class StandaloneNewsRunner:
         self.project_root = Path(__file__).parent.parent / "penguin-overlord"
         self.config = self._load_config()
         
-        cache_path = self.project_root / f'data/feed_cache_{category}.json'
+        # Use /app/data for cache (mounted volume) instead of /app/penguin-overlord/data
+        cache_dir = Path('/app/data')
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        cache_path = cache_dir / f'feed_cache_{category}.json'
         self.fetcher = OptimizedNewsFetcher(cache_file=str(cache_path))
         
         # Load category-specific config

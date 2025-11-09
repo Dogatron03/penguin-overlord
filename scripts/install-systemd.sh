@@ -232,7 +232,7 @@ RemainAfterExit=yes
 User=$ACTUAL_USER
 Group=$ACTUAL_USER
 WorkingDirectory=$PROJECT_DIR
-ExecStart=/usr/bin/docker run -d --name penguin-overlord --restart unless-stopped --env-file $PROJECT_DIR/.env -v $PROJECT_DIR/events:/app/events:ro $IMAGE_NAME
+ExecStart=/usr/bin/docker run -d --name penguin-overlord --restart unless-stopped --env-file $PROJECT_DIR/.env -v $PROJECT_DIR/events:/app/events:ro -v $PROJECT_DIR/data:/app/data $IMAGE_NAME
 ExecStop=/usr/bin/docker stop penguin-overlord
 ExecStopPost=/usr/bin/docker rm -f penguin-overlord
 StandardOutput=journal
@@ -353,6 +353,15 @@ EOF
     create_news_service "apple_google"
     create_news_timer "apple_google" "*-*-* 00,03,06,09,12,15,18,21:45:00"
     
+    create_news_service "us_legislation"
+    create_news_timer "us_legislation" "*-*-* */1:05:00"
+    
+    create_news_service "eu_legislation"
+    create_news_timer "eu_legislation" "*-*-* */1:10:00"
+    
+    create_news_service "general_news"
+    create_news_timer "general_news" "*-*-* */2:20:00"
+    
     echo -e "${GREEN}✓${NC} All news timers created"
     
     # Enable and start timers
@@ -360,7 +369,7 @@ EOF
     read -p "Enable and start news timers? (Y/n) " -n 1 -r
     echo
     if [[ ! $REPLY =~ ^[Nn]$ ]]; then
-        for category in cve cybersecurity tech gaming apple_google; do
+        for category in cve cybersecurity tech gaming apple_google us_legislation eu_legislation general_news; do
             systemctl enable penguin-news-${category}.timer 2>/dev/null || true
             systemctl start penguin-news-${category}.timer 2>/dev/null || true
         done
