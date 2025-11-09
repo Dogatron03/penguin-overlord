@@ -427,6 +427,217 @@ class NewsManager(commands.Cog):
             )
         
         await interaction.response.send_message(embed=embed, ephemeral=True)
+    
+    # Prefix command fallbacks (for when slash commands aren't synced yet)
+    @commands.command(name='news_set_channel')
+    @commands.has_permissions(manage_guild=True)
+    async def news_set_channel_prefix(self, ctx: commands.Context, category: str, channel: discord.TextChannel):
+        """
+        Set the posting channel for a news category (prefix command fallback).
+        
+        Usage:
+            !news_set_channel cybersecurity #security-news
+            !news_set_channel tech #tech-news
+            !news_set_channel gaming #gaming-news
+            !news_set_channel apple_google #apple-google
+            !news_set_channel cve #security-alerts
+            !news_set_channel us_legislation #us-legislation
+            !news_set_channel eu_legislation #eu-legislation
+            !news_set_channel general_news #general-news
+        
+        Requires: Manage Server permission or approved role
+        """
+        valid_categories = ['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve', 
+                           'us_legislation', 'eu_legislation', 'general_news']
+        
+        if category not in valid_categories:
+            await ctx.send(f"❌ Invalid category. Valid options: {', '.join(valid_categories)}")
+            return
+        
+        # Check permissions using the same logic as slash commands
+        if not ctx.author.guild_permissions.administrator:
+            approved_roles = self.config.get(category, {}).get('approved_roles', [])
+            user_role_ids = [role.id for role in ctx.author.roles]
+            if not any(role_id in approved_roles for role_id in user_role_ids):
+                await ctx.send("❌ You don't have permission to configure this news category.")
+                return
+        
+        self.config[category]['channel_id'] = channel.id
+        self._save_config()
+        
+        await ctx.send(f"✅ {category.title()} news will be posted to {channel.mention}")
+    
+    @commands.command(name='news_enable')
+    @commands.has_permissions(administrator=True)
+    async def news_enable_prefix(self, ctx: commands.Context, category: str):
+        """
+        Enable auto-posting for a news category (prefix command fallback).
+        
+        Usage:
+            !news_enable cybersecurity
+            !news_enable tech
+            !news_enable gaming
+        
+        Requires: Administrator permission
+        """
+        valid_categories = ['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve',
+                           'us_legislation', 'eu_legislation', 'general_news']
+        
+        if category not in valid_categories:
+            await ctx.send(f"❌ Invalid category. Valid options: {', '.join(valid_categories)}")
+            return
+        
+        if category not in self.config:
+            await ctx.send(f"❌ Category {category} not found in config.")
+            return
+        
+        if not self.config[category].get('channel_id'):
+            await ctx.send(
+                f"❌ Please set a channel first: `!news_set_channel {category} #channel`"
+            )
+            return
+        
+        self.config[category]['enabled'] = True
+        self._save_config()
+        
+        # Find and notify the cog
+        cog_name = f"{category}_news"
+        cog = self.bot.get_cog(cog_name)
+        if cog and hasattr(cog, 'news_config'):
+            cog.news_config['enabled'] = True
+            logger.info(f"Enabled {category} news via prefix command")
+        
+        await ctx.send(f"✅ {category.title()} news auto-posting enabled!")
+    
+    @commands.command(name='news_disable')
+    @commands.has_permissions(administrator=True)
+    async def news_disable_prefix(self, ctx: commands.Context, category: str):
+        """
+        Disable auto-posting for a news category (prefix command fallback).
+        
+        Usage:
+            !news_disable cybersecurity
+            !news_disable tech
+        
+        Requires: Administrator permission
+        """
+        valid_categories = ['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve',
+                           'us_legislation', 'eu_legislation', 'general_news']
+        
+        if category not in valid_categories:
+            await ctx.send(f"❌ Invalid category. Valid options: {', '.join(valid_categories)}")
+            return
+        
+        if category not in self.config:
+            await ctx.send(f"❌ Category {category} not found in config.")
+            return
+        
+        self.config[category]['enabled'] = False
+        self._save_config()
+        
+        # Find and notify the cog
+        cog_name = f"{category}_news"
+        cog = self.bot.get_cog(cog_name)
+        if cog and hasattr(cog, 'news_config'):
+            cog.news_config['enabled'] = False
+            logger.info(f"Disabled {category} news via prefix command")
+        
+        await ctx.send(f"✅ {category.title()} news auto-posting disabled.")
+    
+    @commands.command(name='news_status')
+    async def news_status_prefix(self, ctx: commands.Context, category: str = None):
+        """
+        Show status of news categories (prefix command fallback).
+        
+        Usage:
+            !news_status                # Show all categories
+            !news_status cybersecurity  # Show specific category
+        """
+        if category:
+            # Show specific category
+            valid_categories = ['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve',
+                               'us_legislation', 'eu_legislation', 'general_news']
+            
+            if category not in valid_categories:
+                await ctx.send(f"❌ Invalid category. Valid options: {', '.join(valid_categories)}")
+                return
+            
+            config = self.config.get(category, {})
+            channel_id = config.get('channel_id')
+            enabled = config.get('enabled', False)
+            
+            # Check if channel came from env var
+            env_var_name = f"NEWS_{category.upper()}_CHANNEL_ID"
+            env_channel = os.getenv(env_var_name)
+            from_env = env_channel and channel_id == int(env_channel) if channel_id else False
+            
+            embed = discord.Embed(
+                title=f"📰 {category.title()} News Status",
+                color=0x00FF00 if enabled else 0xFF0000
+            )
+            
+            embed.add_field(name="Status", value="🟢 Enabled" if enabled else "🔴 Disabled", inline=True)
+            
+            if channel_id:
+                channel = ctx.guild.get_channel(channel_id)
+                channel_info = channel.mention if channel else f"ID: {channel_id} (deleted?)"
+                if from_env:
+                    channel_info += f" (from {env_var_name})"
+                embed.add_field(
+                    name="Channel",
+                    value=channel_info,
+                    inline=True
+                )
+            else:
+                embed.add_field(name="Channel", value="Not configured", inline=True)
+            
+            if channel_id and not enabled:
+                embed.set_footer(text=f"ℹ️ Channel is set but posting is disabled. Use !news_enable {category} to enable.")
+            
+            await ctx.send(embed=embed)
+        else:
+            # Show all categories
+            embed = discord.Embed(
+                title="📰 All News Categories Status",
+                description="Use `!news_status <category>` for details",
+                color=0x5865F2
+            )
+            
+            ready_to_enable = []
+            
+            for cat in ['cybersecurity', 'tech', 'gaming', 'apple_google', 'cve',
+                       'us_legislation', 'eu_legislation', 'general_news']:
+                config = self.config.get(cat, {})
+                enabled = config.get('enabled', False)
+                channel_id = config.get('channel_id')
+                
+                status = "🟢 Enabled" if enabled else "🔴 Disabled"
+                
+                # Check if from env var
+                env_var = f"NEWS_{cat.upper()}_CHANNEL_ID"
+                env_value = os.getenv(env_var)
+                from_env = env_value and channel_id == int(env_value) if channel_id else False
+                
+                if from_env:
+                    channel_info = "✅ Configured (env)"
+                elif channel_id:
+                    channel_info = "✅ Configured"
+                else:
+                    channel_info = "❌ No channel"
+                
+                if channel_id and not enabled:
+                    ready_to_enable.append(cat)
+                
+                embed.add_field(
+                    name=cat.replace('_', ' ').title(),
+                    value=f"{status}\n{channel_info}",
+                    inline=True
+                )
+            
+            if ready_to_enable:
+                embed.set_footer(text=f"ℹ️ {len(ready_to_enable)} categories have channels set but are disabled. Use !news_enable <category> to enable.")
+            
+            await ctx.send(embed=embed)
 
 
 async def setup(bot):
