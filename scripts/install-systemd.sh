@@ -364,19 +364,19 @@ EOF
     create_news_timer "tech" "*-*-* 00,04,08,12,16,20:30:00"
     
     create_news_service "gaming"
-    create_news_timer "gaming" "*-*-* */2:15:00"
+    create_news_timer "gaming" "*-*-* 00,02,04,06,08,10,12,14,16,18,20,22:15:00"
     
     create_news_service "apple_google"
     create_news_timer "apple_google" "*-*-* 00,03,06,09,12,15,18,21:45:00"
     
     create_news_service "us_legislation"
-    create_news_timer "us_legislation" "*-*-* */1:05:00"
+    create_news_timer "us_legislation" "*-*-* *:05:00"
     
     create_news_service "eu_legislation"
-    create_news_timer "eu_legislation" "*-*-* */1:10:00"
+    create_news_timer "eu_legislation" "*-*-* *:10:00"
     
     create_news_service "general_news"
-    create_news_timer "general_news" "*-*-* */2:20:00"
+    create_news_timer "general_news" "*-*-* 00,02,04,06,08,10,12,14,16,18,20,22:20:00"
     
     echo -e "${GREEN}✓${NC} All news timers created"
     
