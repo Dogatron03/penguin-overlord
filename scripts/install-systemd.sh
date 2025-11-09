@@ -197,9 +197,17 @@ elif [ "$DEPLOYMENT_MODE" = "2" ]; then
     fi
     
     if [ "$BUILD" = true ]; then
-        # Remove ALL old images - local AND GHCR cached
+        # Stop and remove container if running (so we can remove image)
+        if docker ps -a --format '{{.Names}}' | grep -q '^penguin-overlord$'; then
+            echo "Stopping existing container..."
+            docker stop penguin-overlord 2>/dev/null || true
+            docker rm -f penguin-overlord 2>/dev/null || true
+        fi
+        
+        # Remove ALL old images - local AND GHCR cached (with and without :latest tag)
         echo "Removing all old images..."
         $DOCKER_CMD rmi -f $IMAGE_NAME:latest 2>/dev/null || true
+        $DOCKER_CMD rmi -f $IMAGE_NAME 2>/dev/null || true
         $DOCKER_CMD rmi -f ghcr.io/chiefgyk3d/penguin-overlord:latest 2>/dev/null || true
         
         echo "1) Build local  2) Pull from GHCR"
