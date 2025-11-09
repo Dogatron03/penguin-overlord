@@ -82,6 +82,29 @@ if [ "$SKIP_MODE_PROMPT" != "true" ]; then
     [[ ! $DEPLOYMENT_MODE =~ ^[1-2]$ ]] && echo -e "${RED}Invalid option${NC}" && exit 1
 fi
 
+# Ask about news system optimization
+echo ""
+echo -e "${BLUE}News System Configuration:${NC}"
+echo "The bot includes news aggregation for 73+ sources across 8 categories."
+echo ""
+echo "Choose news fetching strategy:"
+echo -e "  1) ${GREEN}Integrated${NC} - News runs inside bot (simpler, 500MB RAM constant)"
+echo -e "  2) ${GREEN}Optimized${NC}  - Separate systemd timers (99% less bandwidth, 0MB idle)"
+echo ""
+read -p "Select [1-2] (default: 1): " -n 1 -r NEWS_MODE
+echo ""
+NEWS_MODE="${NEWS_MODE:-1}"
+
+[[ ! $NEWS_MODE =~ ^[1-2]$ ]] && echo -e "${YELLOW}Invalid option, using integrated mode${NC}" && NEWS_MODE="1"
+
+if [ "$NEWS_MODE" = "2" ]; then
+    echo -e "${GREEN}✓${NC} Will deploy optimized news timers"
+    DEPLOY_NEWS_TIMERS=true
+else
+    echo -e "${GREEN}✓${NC} News will run integrated in bot"
+    DEPLOY_NEWS_TIMERS=false
+fi
+
 if [ ! -f "$PROJECT_DIR/.env" ]; then
     echo -e "${YELLOW}WARNING: .env not found!${NC}"
     echo "Create .env with DISCORD_TOKEN before starting"
@@ -174,9 +197,17 @@ elif [ "$DEPLOYMENT_MODE" = "2" ]; then
     fi
     
     if [ "$BUILD" = true ]; then
-        # Remove ALL old images - local AND GHCR cached
+        # Stop and remove container if running (so we can remove image)
+        if docker ps -a --format '{{.Names}}' | grep -q '^penguin-overlord$'; then
+            echo "Stopping existing container..."
+            docker stop penguin-overlord 2>/dev/null || true
+            docker rm -f penguin-overlord 2>/dev/null || true
+        fi
+        
+        # Remove ALL old images - local AND GHCR cached (with and without :latest tag)
         echo "Removing all old images..."
         $DOCKER_CMD rmi -f $IMAGE_NAME:latest 2>/dev/null || true
+        $DOCKER_CMD rmi -f $IMAGE_NAME 2>/dev/null || true
         $DOCKER_CMD rmi -f ghcr.io/chiefgyk3d/penguin-overlord:latest 2>/dev/null || true
         
         echo "1) Build local  2) Pull from GHCR"
@@ -209,7 +240,7 @@ RemainAfterExit=yes
 User=$ACTUAL_USER
 Group=$ACTUAL_USER
 WorkingDirectory=$PROJECT_DIR
-ExecStart=/usr/bin/docker run -d --name penguin-overlord --restart unless-stopped --env-file $PROJECT_DIR/.env -v $PROJECT_DIR/events:/app/events:ro $IMAGE_NAME
+ExecStart=/usr/bin/docker run -d --name penguin-overlord --restart unless-stopped --env-file $PROJECT_DIR/.env -v $PROJECT_DIR/events:/app/events:ro -v $PROJECT_DIR/data:/app/data $IMAGE_NAME
 ExecStop=/usr/bin/docker stop penguin-overlord
 ExecStopPost=/usr/bin/docker rm -f penguin-overlord
 StandardOutput=journal
@@ -223,8 +254,152 @@ fi
 
 echo -e "${GREEN}✓${NC} Service file created"
 
+# Create data directory with proper permissions for cache files
+if [ "$IS_DOCKER" = true ]; then
+    mkdir -p "$PROJECT_DIR/data"
+    chown -R $ACTUAL_USER:$ACTUAL_USER "$PROJECT_DIR/data"
+    chmod -R 755 "$PROJECT_DIR/data"
+    echo -e "${GREEN}✓${NC} Data directory prepared"
+fi
+
+# Deploy news timers if optimized mode selected
+if [ "$DEPLOY_NEWS_TIMERS" = true ]; then
+    echo ""
+    echo -e "${BLUE}Deploying Optimized News Timers...${NC}"
+    
+    # Function to create news service
+    create_news_service() {
+        local category=$1
+        local service_file="/etc/systemd/system/penguin-news-${category}.service"
+        
+        # Create service based on deployment mode
+        if [ "$DEPLOYMENT_MODE" = "1" ]; then
+            # Python deployment - use venv
+            cat > "$service_file" << EOF
+[Unit]
+Description=Penguin Bot News Fetcher - ${category}
+After=network.target
+
+[Service]
+Type=oneshot
+User=$ACTUAL_USER
+Group=$ACTUAL_USER
+WorkingDirectory=$PROJECT_DIR/penguin-overlord
+Environment="PATH=$PROJECT_DIR/venv/bin:/usr/local/bin:/usr/bin:/bin"
+ExecStart=$PROJECT_DIR/venv/bin/python $PROJECT_DIR/penguin-overlord/news_runner.py --category ${category}
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=penguin-news-${category}
+
+# Resource limits
+MemoryMax=256M
+CPUQuota=50%
+TasksMax=50
+TimeoutStartSec=120
+
+[Install]
+WantedBy=multi-user.target
+EOF
+        else
+            # Docker deployment - use container
+            cat > "$service_file" << EOF
+[Unit]
+Description=Penguin Bot News Fetcher - ${category} (Docker)
+After=docker.service network.target
+Requires=docker.service
+
+[Service]
+Type=oneshot
+User=$ACTUAL_USER
+Group=$ACTUAL_USER
+WorkingDirectory=$PROJECT_DIR
+ExecStart=/usr/bin/docker run --rm --name penguin-news-${category} --user $(id -u):$(id -g) --env-file $PROJECT_DIR/.env -v $PROJECT_DIR/data:/app/data $IMAGE_NAME python3 /app/penguin-overlord/news_runner.py --category ${category}
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=penguin-news-${category}
+
+# Resource limits
+MemoryMax=300M
+CPUQuota=50%
+TasksMax=50
+TimeoutStartSec=180
+
+[Install]
+WantedBy=multi-user.target
+EOF
+        fi
+        echo "  ✓ Created penguin-news-${category}.service"
+    }
+    
+    # Function to create news timer
+    create_news_timer() {
+        local category=$1
+        local calendar=$2
+        local timer_file="/etc/systemd/system/penguin-news-${category}.timer"
+        
+        cat > "$timer_file" << EOF
+[Unit]
+Description=Penguin Bot ${category^} News Fetcher Timer
+Requires=penguin-news-${category}.service
+
+[Timer]
+OnCalendar=$calendar
+Persistent=true
+AccuracySec=1min
+
+[Install]
+WantedBy=timers.target
+EOF
+        echo "  ✓ Created penguin-news-${category}.timer"
+    }
+    
+    # Create all news services and timers
+    create_news_service "cve"
+    create_news_timer "cve" "*-*-* 00,06,12,18:00:00"
+    
+    create_news_service "cybersecurity"
+    create_news_timer "cybersecurity" "*-*-* 00,03,06,09,12,15,18,21:01:00"
+    
+    create_news_service "tech"
+    create_news_timer "tech" "*-*-* 00,04,08,12,16,20:30:00"
+    
+    create_news_service "gaming"
+    create_news_timer "gaming" "*-*-* 00,02,04,06,08,10,12,14,16,18,20,22:15:00"
+    
+    create_news_service "apple_google"
+    create_news_timer "apple_google" "*-*-* 00,03,06,09,12,15,18,21:45:00"
+    
+    create_news_service "us_legislation"
+    create_news_timer "us_legislation" "*-*-* *:05:00"
+    
+    create_news_service "eu_legislation"
+    create_news_timer "eu_legislation" "*-*-* *:10:00"
+    
+    create_news_service "general_news"
+    create_news_timer "general_news" "*-*-* 00,02,04,06,08,10,12,14,16,18,20,22:20:00"
+    
+    echo -e "${GREEN}✓${NC} All news timers created"
+    
+    # Enable and start timers
+    echo ""
+    read -p "Enable and start news timers? (Y/n) " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+        for category in cve cybersecurity tech gaming apple_google us_legislation eu_legislation general_news; do
+            systemctl enable penguin-news-${category}.timer 2>/dev/null || true
+            systemctl start penguin-news-${category}.timer 2>/dev/null || true
+        done
+        echo -e "${GREEN}✓${NC} News timers enabled and started"
+    else
+        echo "Skipping news timer activation"
+    fi
+fi
+
 systemctl daemon-reload
 echo -e "${GREEN}✓${NC} systemd reloaded"
+
+echo ""
+echo -e "${BLUE}Main Bot Service Configuration:${NC}"
 
 # Check if service was previously enabled
 WAS_ENABLED=false
@@ -232,13 +407,21 @@ if systemctl is-enabled --quiet penguin-overlord.service 2>/dev/null; then
     WAS_ENABLED=true
     echo -e "${GREEN}✓${NC} Service already enabled"
 else
-    read -p "Enable on boot? (Y/n) " -n 1 -r
+    echo ""
+    read -p "Enable penguin-overlord.service on boot? (Y/n) " -n 1 -r
     echo
-    [[ ! $REPLY =~ ^[Nn]$ ]] && systemctl enable penguin-overlord.service && echo -e "${GREEN}✓${NC} Enabled" && WAS_ENABLED=true
+    if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+        systemctl enable penguin-overlord.service
+        echo -e "${GREEN}✓${NC} Enabled"
+        WAS_ENABLED=true
+    else
+        echo "Service will not auto-start on boot"
+    fi
 fi
 
 # If we stopped the service earlier or it wasn't running, ask about starting
-read -p "Start/restart service now? (Y/n) " -n 1 -r
+echo ""
+read -p "Start/restart penguin-overlord.service now? (Y/n) " -n 1 -r
 echo
 if [[ ! $REPLY =~ ^[Nn]$ ]]; then
     echo "Starting penguin-overlord service..."
@@ -265,6 +448,33 @@ fi
 echo ""
 echo -e "${GREEN}Installation Complete!${NC}"
 echo ""
-echo "Commands:"
+echo "Main Bot Commands:"
 echo "  sudo systemctl start|stop|restart|status penguin-overlord"
 echo "  sudo journalctl -u penguin-overlord -f"
+
+if [ "$DEPLOY_NEWS_TIMERS" = true ]; then
+    echo ""
+    echo -e "${BLUE}News Timer Commands:${NC}"
+    echo "  sudo systemctl list-timers penguin-news-*           # View schedule"
+    echo "  sudo systemctl status penguin-news-cybersecurity    # Check status"
+    echo "  sudo journalctl -u penguin-news-tech -f             # View logs"
+    echo "  sudo systemctl start penguin-news-cve.service       # Manual run"
+    echo ""
+    if [ "$DEPLOYMENT_MODE" = "2" ]; then
+        echo -e "${YELLOW}News timers use Docker (each run starts fresh container, auto-cleanup)${NC}"
+        echo ""
+    fi
+    echo -e "${YELLOW}Configure news channels in Discord:${NC}"
+    echo "  /news set_channel cybersecurity #security-news"
+    echo "  /news set_channel tech #tech-news"
+    echo "  /news set_channel gaming #gaming-news"
+    echo "  /news set_channel apple_google #apple-google-news"
+    echo "  /news set_channel cve #security-alerts"
+    echo ""
+    echo -e "${GREEN}News Schedule:${NC}"
+    echo "  CVE:           Every 6 hours at :00"
+    echo "  Cybersecurity: Every 3 hours at :01"
+    echo "  Tech:          Every 4 hours at :30"
+    echo "  Gaming:        Every 2 hours at :15"
+    echo "  Apple/Google:  Every 3 hours at :45"
+fi

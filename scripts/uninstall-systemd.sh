@@ -37,7 +37,10 @@ if [ "$IS_DOCKER" = true ] && command -v docker &> /dev/null; then
     if docker images --format "{{.Repository}}" | grep -q "^penguin-overlord$"; then
         read -p "Remove Docker image? (y/N) " -n 1 -r
         echo
-        [[ $REPLY =~ ^[Yy]$ ]] && docker rmi penguin-overlord && echo -e "${GREEN}✓${NC} Image removed"
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            docker rmi -f penguin-overlord 2>/dev/null || true
+            echo -e "${GREEN}✓${NC} Image removed"
+        fi
     fi
 fi
 
@@ -45,6 +48,34 @@ systemctl is-enabled --quiet penguin-overlord.service 2>/dev/null && systemctl d
 
 rm -f "$SERVICE_FILE"
 echo -e "${GREEN}✓${NC} Service file removed"
+
+# Check for and remove news timer services
+NEWS_CATEGORIES=("cve" "cybersecurity" "tech" "gaming" "apple_google" "us_legislation" "eu_legislation" "general_news")
+TIMER_COUNT=0
+
+for category in "${NEWS_CATEGORIES[@]}"; do
+    TIMER_FILE="/etc/systemd/system/penguin-news-${category}.timer"
+    SERVICE_FILE_NEWS="/etc/systemd/system/penguin-news-${category}.service"
+    
+    if [ -f "$TIMER_FILE" ] || [ -f "$SERVICE_FILE_NEWS" ]; then
+        # Stop and disable timer if running
+        if systemctl is-active --quiet "penguin-news-${category}.timer" 2>/dev/null; then
+            systemctl stop "penguin-news-${category}.timer" 2>/dev/null || true
+        fi
+        
+        if systemctl is-enabled --quiet "penguin-news-${category}.timer" 2>/dev/null; then
+            systemctl disable "penguin-news-${category}.timer" 2>/dev/null || true
+        fi
+        
+        # Remove files
+        rm -f "$TIMER_FILE" "$SERVICE_FILE_NEWS"
+        TIMER_COUNT=$((TIMER_COUNT + 1))
+    fi
+done
+
+if [ $TIMER_COUNT -gt 0 ]; then
+    echo -e "${GREEN}✓${NC} Removed $TIMER_COUNT news timer(s)"
+fi
 
 systemctl daemon-reload
 systemctl reset-failed
