@@ -182,9 +182,9 @@ class OptimizedNewsFetcher:
                 title_match = re.search(r'<title(?:\s+[^>]*)?>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</title>', item, re.DOTALL)
                 if title_match:
                     title = title_match.group(1).strip()
-                    # Strip any HTML tags from title
-                    title = re.sub(r'<[^>]+>', '', title)
-                    title = unescape(title).strip()
+                    # IMPORTANT: Unescape HTML entities FIRST, then strip tags
+                    title = unescape(title)
+                    title = re.sub(r'<[^>]+>', '', title).strip()
                 
                 # If no title or empty, try content/summary for a title
                 if not title:
