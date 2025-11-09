@@ -270,7 +270,7 @@ User=$ACTUAL_USER
 Group=$ACTUAL_USER
 WorkingDirectory=$PROJECT_DIR/penguin-overlord
 Environment="PATH=$PROJECT_DIR/venv/bin:/usr/local/bin:/usr/bin:/bin"
-ExecStart=$PROJECT_DIR/venv/bin/python $PROJECT_DIR/scripts/news_runner.py --category ${category}
+ExecStart=$PROJECT_DIR/venv/bin/python $PROJECT_DIR/penguin-overlord/news_runner.py --category ${category}
 StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=penguin-news-${category}
@@ -297,7 +297,7 @@ Type=oneshot
 User=$ACTUAL_USER
 Group=$ACTUAL_USER
 WorkingDirectory=$PROJECT_DIR
-ExecStart=/usr/bin/docker run --rm --name penguin-news-${category} --env-file $PROJECT_DIR/.env -v $PROJECT_DIR/data:/app/data $IMAGE_NAME python3 /app/scripts/news_runner.py --category ${category}
+ExecStart=/usr/bin/docker run --rm --name penguin-news-${category} --env-file $PROJECT_DIR/.env -v $PROJECT_DIR/data:/app/data $IMAGE_NAME python3 /app/penguin-overlord/news_runner.py --category ${category}
 StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=penguin-news-${category}
