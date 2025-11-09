@@ -331,14 +331,17 @@ EOF
     echo -e "${GREEN}✓${NC} All news timers created"
     
     # Enable and start timers
+    echo ""
     read -p "Enable and start news timers? (Y/n) " -n 1 -r
     echo
     if [[ ! $REPLY =~ ^[Nn]$ ]]; then
         for category in cve cybersecurity tech gaming apple_google; do
-            systemctl enable penguin-news-${category}.timer 2>/dev/null
-            systemctl start penguin-news-${category}.timer 2>/dev/null
+            systemctl enable penguin-news-${category}.timer 2>/dev/null || true
+            systemctl start penguin-news-${category}.timer 2>/dev/null || true
         done
         echo -e "${GREEN}✓${NC} News timers enabled and started"
+    else
+        echo "Skipping news timer activation"
     fi
 fi
 
@@ -354,12 +357,20 @@ if systemctl is-enabled --quiet penguin-overlord.service 2>/dev/null; then
     WAS_ENABLED=true
     echo -e "${GREEN}✓${NC} Service already enabled"
 else
+    echo ""
     read -p "Enable penguin-overlord.service on boot? (Y/n) " -n 1 -r
     echo
-    [[ ! $REPLY =~ ^[Nn]$ ]] && systemctl enable penguin-overlord.service && echo -e "${GREEN}✓${NC} Enabled" && WAS_ENABLED=true
+    if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+        systemctl enable penguin-overlord.service
+        echo -e "${GREEN}✓${NC} Enabled"
+        WAS_ENABLED=true
+    else
+        echo "Service will not auto-start on boot"
+    fi
 fi
 
 # If we stopped the service earlier or it wasn't running, ask about starting
+echo ""
 read -p "Start/restart penguin-overlord.service now? (Y/n) " -n 1 -r
 echo
 if [[ ! $REPLY =~ ^[Nn]$ ]]; then
