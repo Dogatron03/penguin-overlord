@@ -289,49 +289,62 @@ class Radiohead(commands.Cog):
             !solar
             /solar
         """
+        await ctx.defer()
+        
         try:
             if not self.session:
                 self.session = aiohttp.ClientSession()
             
+            # Fetch NOAA scales (R, S, G scales)
             async with self.session.get('https://services.swpc.noaa.gov/products/noaa-scales.json', timeout=10) as resp:
                 if resp.status == 200:
                     data = await resp.json()
                     
-                    # Extract current conditions
+                    # Extract current conditions from "0" key (current time)
                     r_scale = 'N/A'
                     s_scale = 'N/A'
                     g_scale = 'N/A'
                     
-                    if isinstance(data, dict):
-                        r_scale = data.get('R', {}).get('Scale', 'N/A')
-                        s_scale = data.get('S', {}).get('Scale', 'N/A')
-                        g_scale = data.get('G', {}).get('Scale', 'N/A')
+                    if isinstance(data, dict) and '0' in data:
+                        current = data['0']
+                        r_scale = current.get('R', {}).get('Scale', 'N/A')
+                        s_scale = current.get('S', {}).get('Scale', 'N/A')
+                        g_scale = current.get('G', {}).get('Scale', 'N/A')
                     
-                    # Now fetch solar flux and other indices
-                    async with self.session.get('https://services.swpc.noaa.gov/text/wwv.txt', timeout=10) as wwv_resp:
-                        sfi = 'N/A'
-                        a_index = 'N/A'
-                        k_index = 'N/A'
-                        
-                        if wwv_resp.status == 200:
-                            wwv_text = await wwv_resp.text()
-                            # Parse WWV text format
-                            for line in wwv_text.split('\n'):
-                                if 'Solar flux' in line:
-                                    parts = line.split()
-                                    for i, part in enumerate(parts):
-                                        if part == 'flux' and i + 1 < len(parts):
-                                            sfi = parts[i + 1]
-                                elif 'A' in line and 'index' in line.lower():
-                                    parts = line.split()
-                                    for i, part in enumerate(parts):
-                                        if part.upper() == 'A' and i + 1 < len(parts):
-                                            a_index = parts[i + 1]
-                                elif 'K' in line and 'index' in line.lower():
-                                    parts = line.split()
-                                    for i, part in enumerate(parts):
-                                        if part.upper() == 'K' and i + 1 < len(parts):
-                                            k_index = parts[i + 1]
+                    # Fetch solar flux from JSON endpoint
+                    sfi = 'N/A'
+                    async with self.session.get('https://services.swpc.noaa.gov/json/f107_cm_flux.json', timeout=10) as flux_resp:
+                        if flux_resp.status == 200:
+                            flux_data = await flux_resp.json()
+                            # Get the most recent entry with reporting_schedule="Noon" (official value)
+                            if flux_data:
+                                for entry in reversed(flux_data):
+                                    if entry.get('reporting_schedule') == 'Noon':
+                                        sfi = str(int(entry.get('flux', 0)))
+                                        break
+                                # If no Noon value, just take the latest
+                                if sfi == 'N/A' and flux_data:
+                                    sfi = str(int(flux_data[-1].get('flux', 0)))
+                    
+                    # Fetch K-index from JSON endpoint
+                    k_index = 'N/A'
+                    async with self.session.get('https://services.swpc.noaa.gov/json/planetary_k_index_1m.json', timeout=10) as k_resp:
+                        if k_resp.status == 200:
+                            k_data = await k_resp.json()
+                            # Get the most recent K-index
+                            if k_data:
+                                k_index = str(k_data[-1].get('kp_index', 'N/A'))
+                    
+                    # Calculate A-index from K-index (approximation: K to A conversion)
+                    # Typical conversion: A ≈ (K^2) * 3.3
+                    a_index = 'N/A'
+                    if k_index != 'N/A':
+                        try:
+                            k_val = int(k_index)
+                            a_val = int((k_val ** 2) * 3.3)
+                            a_index = str(a_val)
+                        except:
+                            pass
                     
                     # Determine overall conditions based on all factors
                     conditions_good = (
