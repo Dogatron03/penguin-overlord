@@ -256,14 +256,10 @@ if [ "$DEPLOY_NEWS_TIMERS" = true ]; then
         local category=$1
         local service_file="/etc/systemd/system/penguin-news-${category}.service"
         
-        # Determine work directory
-        if [ -f "$PROJECT_DIR/penguin-overlord/bot.py" ]; then
-            WORK_DIR="$PROJECT_DIR/penguin-overlord"
-        else
-            WORK_DIR="$PROJECT_DIR"
-        fi
-        
-        cat > "$service_file" << EOF
+        # Create service based on deployment mode
+        if [ "$DEPLOYMENT_MODE" = "1" ]; then
+            # Python deployment - use venv
+            cat > "$service_file" << EOF
 [Unit]
 Description=Penguin Bot News Fetcher - ${category}
 After=network.target
@@ -272,8 +268,9 @@ After=network.target
 Type=oneshot
 User=$ACTUAL_USER
 Group=$ACTUAL_USER
-WorkingDirectory=$WORK_DIR
-ExecStart=/usr/bin/python3 $PROJECT_DIR/scripts/news_runner.py --category ${category}
+WorkingDirectory=$PROJECT_DIR/penguin-overlord
+Environment="PATH=$PROJECT_DIR/venv/bin:/usr/local/bin:/usr/bin:/bin"
+ExecStart=$PROJECT_DIR/venv/bin/python $PROJECT_DIR/scripts/news_runner.py --category ${category}
 StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=penguin-news-${category}
@@ -287,6 +284,34 @@ TimeoutStartSec=120
 [Install]
 WantedBy=multi-user.target
 EOF
+        else
+            # Docker deployment - use container
+            cat > "$service_file" << EOF
+[Unit]
+Description=Penguin Bot News Fetcher - ${category} (Docker)
+After=docker.service network.target
+Requires=docker.service
+
+[Service]
+Type=oneshot
+User=$ACTUAL_USER
+Group=$ACTUAL_USER
+WorkingDirectory=$PROJECT_DIR
+ExecStart=/usr/bin/docker run --rm --name penguin-news-${category} --env-file $PROJECT_DIR/.env -v $PROJECT_DIR/data:/app/data $IMAGE_NAME python3 /app/scripts/news_runner.py --category ${category}
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=penguin-news-${category}
+
+# Resource limits
+MemoryMax=300M
+CPUQuota=50%
+TasksMax=50
+TimeoutStartSec=180
+
+[Install]
+WantedBy=multi-user.target
+EOF
+        fi
         echo "  ✓ Created penguin-news-${category}.service"
     }
     
@@ -410,7 +435,11 @@ if [ "$DEPLOY_NEWS_TIMERS" = true ]; then
     echo "  sudo journalctl -u penguin-news-tech -f             # View logs"
     echo "  sudo systemctl start penguin-news-cve.service       # Manual run"
     echo ""
-    echo -e "${YELLOW}Note: Configure news channels in Discord:${NC}"
+    if [ "$DEPLOYMENT_MODE" = "2" ]; then
+        echo -e "${YELLOW}News timers use Docker (each run starts fresh container, auto-cleanup)${NC}"
+        echo ""
+    fi
+    echo -e "${YELLOW}Configure news channels in Discord:${NC}"
     echo "  /news set_channel cybersecurity #security-news"
     echo "  /news set_channel tech #tech-news"
     echo "  /news set_channel gaming #gaming-news"
