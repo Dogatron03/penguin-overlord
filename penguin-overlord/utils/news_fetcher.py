@@ -220,20 +220,32 @@ class OptimizedNewsFetcher:
                 description = ""
                 if desc_match:
                     desc = desc_match.group(1).strip()
+                    
+                    # Log raw description for debugging
+                    logger.debug(f"{source_name}: Raw desc length: {len(desc)}, first 100 chars: {desc[:100]}")
+                    
                     # Use HTML parser to properly strip all tags
                     stripper = HTMLStripper()
                     try:
                         stripper.feed(desc)
                         desc = stripper.get_text()
-                    except Exception:
+                        logger.debug(f"{source_name}: After HTMLStripper: {desc[:100]}")
+                    except Exception as e:
                         # Fallback to regex if parser fails
+                        logger.warning(f"HTML parser failed for {source_name}, using regex: {e}")
                         desc = re.sub(r'<script[^>]*>.*?</script>', '', desc, flags=re.DOTALL | re.IGNORECASE)
                         desc = re.sub(r'<style[^>]*>.*?</style>', '', desc, flags=re.DOTALL | re.IGNORECASE)
                         desc = re.sub(r'<[^>]+>', '', desc, flags=re.DOTALL)
+                        logger.debug(f"{source_name}: After regex: {desc[:100]}")
                     
+                    # Clean up any leftover HTML entities and whitespace
+                    desc = unescape(desc)
                     desc = re.sub(r'\s+', ' ', desc)  # Normalize whitespace
-                    desc = unescape(desc).strip()
+                    desc = desc.strip()
+                    
+                    # Truncate if too long
                     description = desc[:300] + "..." if len(desc) > 300 else desc
+                    logger.info(f"{source_name}: Final description: {description[:100]}")
                 
                 # Use link as fallback GUID
                 if not guid:
