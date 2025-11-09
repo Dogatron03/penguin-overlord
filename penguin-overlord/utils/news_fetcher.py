@@ -240,7 +240,7 @@ class OptimizedNewsFetcher:
                         logger.warning(f"HTML parser failed for {source_name}, using regex: {e}")
                         desc = re.sub(r'<script[^>]*>.*?</script>', '', desc, flags=re.DOTALL | re.IGNORECASE)
                         desc = re.sub(r'<style[^>]*>.*?</style>', '', desc, flags=re.DOTALL | re.IGNORECASE)
-                        desc = re.sub(r'<[^>]+>', '', desc, flags=re.DOTALL)
+                        desc = re.sub(r'<[^>]+>', '', desc)
                         logger.debug(f"{source_name}: After regex: {desc[:100]}")
                     
                     # Clean up whitespace
