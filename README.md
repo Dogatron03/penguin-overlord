@@ -59,6 +59,34 @@ State persistence:
 
 The cog stores its state in `data/xkcd_state.json` and will create the `data/` directory and file on first run. The file contains `last_posted`, `channel_id`, and `enabled` fields.
 
+### 🎨 Tech Comics Collection
+Enjoy tech humor from multiple actively-updated webcomic sources!
+
+**Manual Commands:**
+- `!comic` or `!comic random` - Random tech comic from any source
+- `!comic xkcd` - Latest XKCD (tech/science/cyber humor)
+- `!comic joyoftech` - Latest Joy of Tech (Apple, Linux, geek culture)
+- `!comic turnoff` - Latest TurnOff.us (Git/DevOps/programmer humor)
+- `!comic_trivia [xkcd_num]` - Get explanation for an XKCD comic from explainxkcd.com
+
+**📰 Daily Tech Comics (Automated):**
+The bot can automatically post a random tech comic daily at 9 AM UTC to a configured channel.
+
+Configuration:
+- `COMIC_POST_CHANNEL_ID` — Channel ID for daily comic posts (optional, can use runtime command)
+
+Admin runtime commands (owner or Manage Server permission required):
+- `!comic_set_channel <#channel>` — Set the daily comic channel
+- `!comic_enable` / `!comic_disable` — Toggle daily posting (9 AM UTC)
+- `!daily_comic` — Force post a comic immediately
+
+**Comic Sources:**
+- 🤓 **XKCD**: Tech, science, and cybersecurity humor (via JSON API: https://xkcd.com/info.0.json)
+- 😂 **Joy of Tech**: Apple, Linux, and general geek culture (via https://www.joyoftech.com/joyoftech/jotblog/index.xml)
+- 🔧 **TurnOff.us**: Git, DevOps, and programmer humor (via https://turnoff.us/feed.xml)
+
+State persistence: Stored in `data/comic_state.json`
+
 ### 🎲 Fun Commands
 - `!cyberfortune` - Get a cybersecurity-themed fortune cookie
 - `!randomlinuxcmd` - Get a random Linux command from the manpage (250+ commands)
@@ -207,6 +235,8 @@ penguin-overlord/
 │   ├── bot.py               # Main bot entry point
 │   ├── cogs/                # Bot extensions/features
 │   │   ├── xkcd.py          # XKCD commands
+│   │   ├── xkcd_poster.py   # Automated XKCD posting
+│   │   ├── comics.py        # Multi-source tech comics (Dilbert, CommitStrip, SMBC)
 │   │   ├── techquote.py     # Tech Quote commands (610+ quotes!)
 │   │   ├── admin.py         # Admin & help commands (6 pages)
 │   │   ├── cyberfortune.py  # Cyber fortune cookies

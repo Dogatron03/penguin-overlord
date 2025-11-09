@@ -205,6 +205,21 @@ class Admin(commands.Cog):
             ),
             inline=False
         )
+        embed.add_field(
+            name="🎨 Tech Comics",
+            value=(
+                "`!comic` or `!comic random` - Random tech comic\n"
+                "`!comic xkcd` - Latest XKCD (tech/science)\n"
+                "`!comic joyoftech` - Latest Joy of Tech (geek culture)\n"
+                "`!comic turnoff` - Latest TurnOff.us (Git/DevOps)\n"
+                "`!comic_trivia [xkcd_num]` - Explain an XKCD comic\n"
+                "\n**📰 Daily Comics (Admin):**\n"
+                "`!comic_set_channel <#channel>` - Set daily comic channel\n"
+                "`!comic_enable` / `!comic_disable` - Toggle daily posting (9 AM UTC)\n"
+                "`!daily_comic` - Force post today's comic"
+            ),
+            inline=False
+        )
         embed.set_footer(text="Page 1 of 6 • Use buttons to navigate")
         embeds.append(embed)
         
