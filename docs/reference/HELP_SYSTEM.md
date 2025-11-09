@@ -5,9 +5,10 @@
 ### Basic Usage
 
 ```
-!help2              Show interactive help menu with dropdown
-!help2 xkcd         Show help for specific command
-/help2              Also works as slash command
+!help               Show interactive help menu with dropdown
+!help xkcd          Show help for specific command
+/help               Also works as slash command
+!help_old           Legacy paginated help (fallback)
 ```
 
 ## Category Structure

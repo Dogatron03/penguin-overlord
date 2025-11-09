@@ -171,14 +171,14 @@ class Admin(commands.Cog):
         
         await ctx.send(embed=embed)
     
-    @commands.command(name='help')
+    @commands.command(name='help_old')
     async def help_command(self, ctx: commands.Context, *, command: str = None):
         """
-        Display help information for all commands or a specific command.
+        Display help information for all commands (legacy paginated version).
         
         Usage:
-            !help - Show all commands
-            !help [command] - Show help for a specific command
+            !help_old - Show all commands
+            !help_old [command] - Show help for a specific command
         """
         if command:
             # Show help for a specific command

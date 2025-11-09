@@ -167,8 +167,8 @@ See [Channel Configuration Reference](reference/CHANNEL_CONFIGURATION.md) for co
 
 ### In Discord
 ```
-!help2         # Interactive categorized help
-/help2         # Slash command version
+!help          # Interactive categorized help
+/help          # Slash command version
 !help [command] # Help for specific command
 ```
 

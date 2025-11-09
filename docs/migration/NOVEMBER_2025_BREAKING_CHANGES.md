@@ -337,4 +337,4 @@ If you encounter issues:
 
 ---
 
-**Questions?** Check the help system: `!help2` or `/help2`
+**Questions?** Check the help system: `!help` or `/help`

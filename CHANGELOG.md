@@ -11,13 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - SOLAR_POST_CHANNEL_ID environment variable support in radiohead.py
 - Comprehensive documentation index (docs/README.md)
 - Organized documentation structure with 7 categories
-- New help system with dropdown navigation (`!help2`)
+- New help system with dropdown navigation (now as `!help`)
 - General News category with 7 major news outlets
+- News timer deployment mode awareness (Python vs Docker)
 
 ### Changed
 - **BREAKING**: All auto-posting now defaults to DISABLED (must explicitly enable)
 - **BREAKING**: Removed legacy SecurityNews system (use NEWS_CYBERSECURITY_CHANNEL_ID instead)
+- **BREAKING**: `!help` now uses new dropdown system (old paginated help available as `!help_old`)
 - Merged `!propagation` command into `!solar` (propagation now an alias)
+- News timers now match bot deployment mode (Python venv or Docker containers)
 - Reorganized documentation into structured folders:
   - setup/ - Getting started guides
   - features/ - Feature documentation

@@ -578,14 +578,14 @@ class CategorizedHelp(commands.Cog):
         self.bot = bot
         logger.info("Categorized Help cog loaded")
     
-    @commands.hybrid_command(name='help2', description='Show categorized help (new system)')
+    @commands.hybrid_command(name='help', description='Show categorized help')
     async def help_new(self, ctx: commands.Context, *, command: str = None):
         """
         Show categorized help with dropdown navigation.
         
         Usage:
-            !help2 - Show interactive help menu
-            !help2 [command] - Show help for specific command (falls back to old help)
+            !help - Show interactive help menu
+            !help [command] - Show help for specific command
         """
         if command:
             # For specific commands, show simple help
