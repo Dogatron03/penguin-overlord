@@ -43,15 +43,14 @@ class PenguinOverlord(commands.Bot):
             command_prefix='!',
             intents=intents,
             description='Penguin Overlord - Your fun companion bot!',
-            owner_id=int(owner_id) if owner_id else None,
-            help_command=None  # Disable default help command to use our custom one
+            owner_id=int(owner_id) if owner_id else None
         )
+        
+        # Completely disable the default help command
+        self.help_command = None
     
     async def setup_hook(self):
         """Load extensions/cogs when bot starts."""
-        # Ensure default help command is removed
-        self.remove_command('help')
-        
         logger.info("Loading extensions...")
         
         # Load all cogs from the cogs directory

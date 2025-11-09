@@ -99,7 +99,7 @@ class Admin(commands.Cog):
             await ctx.send(f"❌ Failed to sync commands: {e}")
             logger.error(f"Manual sync failed: {e}")
     
-    @commands.hybrid_command(name='help', description='Show all available commands')
+    @commands.command(name='help')
     async def help_command(self, ctx: commands.Context, *, command: str = None):
         """
         Display help information for all commands or a specific command.
@@ -107,7 +107,6 @@ class Admin(commands.Cog):
         Usage:
             !help - Show all commands
             !help [command] - Show help for a specific command
-            /help - Show all commands
         """
         if command:
             # Show help for a specific command
@@ -153,7 +152,7 @@ class Admin(commands.Cog):
             ),
             inline=False
         )
-        embed.set_footer(text="Page 1 of 3 • Use buttons to navigate")
+        embed.set_footer(text="Page 1 of 4 • Use buttons to navigate")
         embeds.append(embed)
         
         # Page 2: Tech Quote Commands
@@ -184,10 +183,34 @@ class Admin(commands.Cog):
                   "• And many more pioneers of computing!",
             inline=False
         )
-        embed.set_footer(text="Page 2 of 3 • Use buttons to navigate")
+        embed.set_footer(text="Page 2 of 4 • Use buttons to navigate")
         embeds.append(embed)
         
-        # Page 3: General Info and Admin
+        # Page 3: Fun Commands
+        embed = discord.Embed(
+            title="🐧 Penguin Overlord - Help",
+            description="Fun commands for entertainment and learning!",
+            color=0x5865F2
+        )
+        embed.add_field(
+            name="🍪 Cyber Fortune Cookie",
+            value="`!fortune` - Get random infosec wisdom (sarcastic or real)",
+            inline=False
+        )
+        embed.add_field(
+            name="📖 Random Linux Commands",
+            value="`!manpage` - Get random Linux command snippets",
+            inline=False
+        )
+        embed.add_field(
+            name="🧌 Patch Gremlin",
+            value="`!patchgremlin` - Chaotic reminders about system updates",
+            inline=False
+        )
+        embed.set_footer(text="Page 3 of 4 • Use buttons to navigate")
+        embeds.append(embed)
+        
+        # Page 4: General Info and Admin
         embed = discord.Embed(
             title="🐧 Penguin Overlord - Help",
             description="Additional information and admin commands",
@@ -225,7 +248,7 @@ class Admin(commands.Cog):
             ),
             inline=False
         )
-        embed.set_footer(text="Page 3 of 3 • Made with 🐧 and ❤️")
+        embed.set_footer(text="Page 4 of 4 • Made with 🐧 and ❤️")
         embeds.append(embed)
         
         # Create paginator view and send
