@@ -15,7 +15,6 @@ NC='\033[0m'
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 IMAGE_NAME="penguin-overlord"
-TARBALL="penguin-overlord.tar.gz"
 
 # Parse arguments
 REMOTE_HOST="${1}"
@@ -36,6 +35,33 @@ echo "Project: $PROJECT_DIR"
 echo "Target: $REMOTE_USER@$REMOTE_HOST"
 echo ""
 
+# Ask for target architecture
+echo -e "${BLUE}Select target architecture:${NC}"
+echo "  1) AMD64/x86_64 (Intel/AMD processors)"
+echo "  2) ARM64/aarch64 (Raspberry Pi, Apple Silicon)"
+echo ""
+read -p "Select [1-2] (default: 2 for Pi): " -n 1 -r ARCH_CHOICE
+echo ""
+ARCH_CHOICE="${ARCH_CHOICE:-2}"
+
+if [ "$ARCH_CHOICE" = "1" ]; then
+    PLATFORM="linux/amd64"
+    ARCH_NAME="amd64"
+    TARBALL="penguin-overlord-amd64.tar.gz"
+elif [ "$ARCH_CHOICE" = "2" ]; then
+    PLATFORM="linux/arm64"
+    ARCH_NAME="arm64"
+    TARBALL="penguin-overlord-arm64.tar.gz"
+else
+    echo -e "${RED}Invalid choice, defaulting to ARM64 for Raspberry Pi${NC}"
+    PLATFORM="linux/arm64"
+    ARCH_NAME="arm64"
+    TARBALL="penguin-overlord-arm64.tar.gz"
+fi
+
+echo -e "${GREEN}Building for: $ARCH_NAME${NC}"
+echo ""
+
 # Check if Docker is available
 if ! command -v docker &> /dev/null; then
     echo -e "${RED}ERROR: Docker not found${NC}"
@@ -48,10 +74,28 @@ if [ ! -f "$PROJECT_DIR/Dockerfile" ]; then
     exit 1
 fi
 
+# Check if buildx is available for cross-platform builds
+if ! docker buildx version &> /dev/null; then
+    echo -e "${YELLOW}Note: docker buildx not available, using standard build${NC}"
+    echo -e "${YELLOW}This will build for your current platform only${NC}"
+    USE_BUILDX=false
+else
+    USE_BUILDX=true
+fi
+
 # Build the image
-echo -e "${BLUE}Step 1: Building Docker image...${NC}"
+echo -e "${BLUE}Step 1: Building Docker image for $ARCH_NAME...${NC}"
 cd "$PROJECT_DIR"
-docker build --no-cache --pull -t $IMAGE_NAME .
+
+if [ "$USE_BUILDX" = true ]; then
+    # Use buildx for cross-platform builds
+    echo "Using docker buildx for cross-platform build..."
+    docker buildx build --platform $PLATFORM --load --no-cache --pull -t $IMAGE_NAME .
+else
+    # Standard build (native platform only)
+    docker build --no-cache --pull -t $IMAGE_NAME .
+fi
+
 echo -e "${GREEN}✓${NC} Build complete"
 echo ""
 

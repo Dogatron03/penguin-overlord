@@ -12,17 +12,38 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-TARBALL="${1:-$HOME/penguin-overlord.tar.gz}"
+TARBALL="${1}"
 
 echo -e "${BLUE}=== Penguin Overlord - Load Docker Image ===${NC}"
 echo ""
 
-# Check if tarball exists
+# If no tarball specified, try to find one
+if [ -z "$TARBALL" ]; then
+    # Look for architecture-specific tarballs first
+    if [ -f "$HOME/penguin-overlord-arm64.tar.gz" ]; then
+        TARBALL="$HOME/penguin-overlord-arm64.tar.gz"
+    elif [ -f "$HOME/penguin-overlord-amd64.tar.gz" ]; then
+        TARBALL="$HOME/penguin-overlord-amd64.tar.gz"
+    elif [ -f "$HOME/penguin-overlord.tar.gz" ]; then
+        TARBALL="$HOME/penguin-overlord.tar.gz"
+    else
+        echo -e "${RED}ERROR: No tarball found in home directory${NC}"
+        echo ""
+        echo "Looking for one of:"
+        echo "  ~/penguin-overlord-arm64.tar.gz"
+        echo "  ~/penguin-overlord-amd64.tar.gz"
+        echo "  ~/penguin-overlord.tar.gz"
+        echo ""
+        echo "Usage: $0 [tarball-path]"
+        exit 1
+    fi
+fi
+
+# Check if the specified/found tarball exists
 if [ ! -f "$TARBALL" ]; then
     echo -e "${RED}ERROR: Tarball not found: $TARBALL${NC}"
     echo ""
     echo "Usage: $0 [tarball-path]"
-    echo "  Default: ~/penguin-overlord.tar.gz"
     exit 1
 fi
 
