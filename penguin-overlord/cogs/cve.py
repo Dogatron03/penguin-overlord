@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 CVE_SOURCES = {
     'nvd': {
         'name': 'NVD Recent CVEs',
-        'url': 'https://services.nvd.nist.gov/rest/json/cves/2.0?resultsPerPage=20',
+        'url': 'https://services.nvd.nist.gov/rest/json/cves/2.0',
         'type': 'json_api',
         'color': 0x1C4E80,
         'icon': '📊'
@@ -85,9 +85,18 @@ class CVENews(commands.Cog):
             self.bot.loop.create_task(self.session.close())
     
     async def _fetch_nvd_cves(self) -> list:
-        """Fetch recent CVEs from NVD."""
+        """Fetch recent CVEs from NVD (last 7 days)."""
         try:
-            async with self.session.get(CVE_SOURCES['nvd']['url'], timeout=15) as resp:
+            # Build URL with date parameters for recent CVEs
+            end_date = datetime.utcnow()
+            start_date = end_date - timedelta(days=7)
+            
+            start_str = start_date.strftime('%Y-%m-%dT%H:%M:%S.000')
+            end_str = end_date.strftime('%Y-%m-%dT%H:%M:%S.000')
+            
+            url = f"{CVE_SOURCES['nvd']['url']}?pubStartDate={start_str}&pubEndDate={end_str}&resultsPerPage=10"
+            
+            async with self.session.get(url, timeout=15) as resp:
                 if resp.status != 200:
                     logger.warning(f"Failed to fetch NVD CVEs: HTTP {resp.status}")
                     return []
