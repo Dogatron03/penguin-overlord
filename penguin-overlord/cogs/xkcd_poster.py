@@ -33,7 +33,9 @@ logger = logging.getLogger(__name__)
 
 
 class XKCDPoster(commands.Cog):
-    STATE_PATH = os.getenv('XKCD_STATE_PATH', os.path.join(os.getcwd(), 'data', 'xkcd_state.json'))
+    # Prefer an explicit DATA_DIR or Docker-mounted /app/data, fallback to repo data/
+    DATA_DIR = os.getenv('DATA_DIR') or ('/app/data' if os.path.exists('/app/data') else os.path.join(os.getcwd(), 'data'))
+    STATE_PATH = os.getenv('XKCD_STATE_PATH', os.path.join(DATA_DIR, 'xkcd_state.json'))
     API_URL = 'https://xkcd.com/info.0.json'
 
     def __init__(self, bot: commands.Bot):
