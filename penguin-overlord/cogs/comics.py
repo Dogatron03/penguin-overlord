@@ -39,7 +39,8 @@ logger = logging.getLogger(__name__)
 class Comics(commands.Cog):
     """Tech comics from multiple sources"""
     
-    STATE_PATH = os.getenv('COMIC_STATE_PATH', os.path.join(os.getcwd(), 'data', 'comic_state.json'))
+    DATA_DIR = os.getenv('DATA_DIR') or ('/app/data' if os.path.exists('/app/data') else os.path.join(os.getcwd(), 'data'))
+    STATE_PATH = os.getenv('COMIC_STATE_PATH', os.path.join(DATA_DIR, 'comic_state.json'))
     
     # Comic source URLs
     XKCD_API = "https://xkcd.com/info.0.json"
