@@ -126,6 +126,8 @@ class UKLegislation(commands.Cog):
             source_key: The source identifier
             max_days: Only return items from the last N days (default 7)
         """
+        logger.info(f"Fetching legislation from {source_key}")
+
         if source_key not in LEGISLATION_SOURCES:
             return None
         
@@ -139,19 +141,23 @@ class UKLegislation(commands.Cog):
                     return None
                 
                 content = await response.text()
-                
+                test = open('test.xml', 'w', encoding='utf-8')
+                print(content, file=test,flush=True)
+                test.close()
+
                 # Parse RSS/Atom feed
-                item_pattern = r'<item>(.*?)</item>' if '<item>' in content else r'<entry>(.*?)</entry>'
+                item_pattern = r'<item(.*?)>(.*?)</item>'
                 items = re.findall(item_pattern, content, re.DOTALL)
                 
                 if not items:
-                    logger.debug(f"{source['name']}: No items found")
+                    logger.info(f"{source['name']}: No items found")
                     return None
                 
                 # Check each item until we find a recent one that hasn't been posted
                 for item in items[:10]:  # Check up to 10 most recent items
                     # Check if item is recent enough
                     if not self._is_recent(item, max_days):
+                        logger.info(f"{source['name']}: Skipping old item")
                         continue  # Skip old items
                     
                     # Extract title
@@ -187,10 +193,12 @@ class UKLegislation(commands.Cog):
                     self.posted_items[source_key].append(link)
                     self.posted_items[source_key] = self.posted_items[source_key][-50:]  # Keep last 50
                     self._save_state()
-                    
+
+                    logger.info(f"{source['name']}: New item: {title[:100]}...")
                     return title, link, description, source
                 
                 # No recent unposted items found
+                logger.info(f"{source['name']}: No recent unposted items found")
                 return None
         
         except asyncio.TimeoutError:
@@ -229,6 +237,7 @@ class UKLegislation(commands.Cog):
             for source_key in LEGISLATION_SOURCES:
                 # Check if source is enabled
                 if manager and not manager.is_source_enabled('uk_legislation', source_key):
+                    logger.info(f"Skipping {source_key} (disabled)")
                     continue
                 
                 result = await self._fetch_rss_feed(source_key)
@@ -250,7 +259,7 @@ class UKLegislation(commands.Cog):
         
         except Exception as e:
             logger.error(f"Error in legislation auto-poster: {e}")
-    
+
     @legislation_auto_poster.before_loop
     async def before_legislation_auto_poster(self):
         await self.bot.wait_until_ready()

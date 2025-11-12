@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss
+  xmlns:a10="http://www.w3.org/2005/Atom"
+  version="2.0">
+  <channel
+    xmlns:p4="#billsSchema">
+    <title>All Bills</title>
+    <link>https://bills.parliament.uk/</link>
+    <description>A list of up to 50 of most recent bills for the current session</description>
+    <copyright>Copyright 2025, Houses of Parliament</copyright>
+    <lastBuildDate>Tue, 11 Nov 2025 22:15:31 Z</lastBuildDate>
+    <a10:id>https://bills-api.parliament.uk/Rss/AllBill</a10:id>
+    <item
+      p4:stage="Committee stage">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3774</guid>
+      <link>https://bills.parliament.uk/bills/3774</link>
+      <category>Private Members' Bill (Ballot Bill)</category>
+      <category>Commons</category>
+      <title>Terminally Ill Adults (End of Life) Bill</title>
+      <description>A Bill to allow adults who are terminally ill, subject to safeguards and protections, to request and be provided with assistance to end their own life; and for connected purposes.</description>
+      <a10:updated>2025-11-11T21:35:26Z</a10:updated>
+    </item>
+    <item
+      p4:stage="Consideration of Lords amendments">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3946</guid>
+      <link>https://bills.parliament.uk/bills/3946</link>
+      <category>Government Bill</category>
+      <category>Commons</category>
+      <title>Planning and Infrastructure Bill</title>
+      <description>A Bill to make provision about infrastructure; to make provision about town and country planning; to make provision for a scheme, administered by Natural England, for a nature restoration levy payable by developers; to make provision about development corporations; to make provision about the compulsory purchase of land; to make provision about environmental outcomes reports; and for connected purposes.</description>
+      <a10:updated>2025-11-11T18:55:05Z</a10:updated>
+    </item>
+    <item
+      p4:stage="Committee stage">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3938</guid>
+      <link>https://bills.parliament.uk/bills/3938</link>
+      <category>Government Bill</category>
+      <category>Commons</category>
+      <title>Crime and Policing Bill</title>
+      <description>A Bill to make provision about anti-social behaviour, offensive weapons, offences against people (including sexual offences), property offences, the criminal exploitation of persons, sex offenders, stalking and public order; to make provision about powers of the police, the border force and other similar persons; to make provision about confiscation; to make provision about the police; to make provision about terrorism and national security, and about international agreements relating to crime; to make provision about the criminal liability of bodies; and for connected purposes.</description>
+      <a10:updated>2025-11-11T18:53:35Z</a10:updated>
+    </item>
+    <item
+      p4:stage="Committee stage">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3879</guid>
+      <link>https://bills.parliament.uk/bills/3879</link>
+      <category>Government Bill</category>
+      <category>Commons</category>
+      <title>Tobacco and Vapes Bill</title>
+      <description>A Bill to make provision about the supply of tobacco, vapes and other products, including provision prohibiting the sale of tobacco to people born on or after 1 January 2009 and provision about the licensing of retail sales and the registration of retailers; to enable product and information requirements to be imposed in connection with tobacco, vapes and other products; to control the advertising and promotion of tobacco, vapes and other products; and to make provision about smoke-free places, vape-free places and heated tobacco-free places.</description>
+      <a10:updated>2025-11-11T17:29:26Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/4017</guid>
+      <link>https://bills.parliament.uk/bills/4017</link>
+      <category>Private Members' Bill (under the Ten Minute Rule)</category>
+      <category>Commons</category>
+      <title>Neurodivergence (Screening and Teacher Training) Bill</title>
+      <description>A Bill to make provision about screening for neurodivergence in primary school-aged children; to make provision about teacher training relating to neurodivergence; and for connected purposes.</description>
+      <a10:updated>2025-11-11T16:54:17Z</a10:updated>
+    </item>
+    <item
+      p4:stage="Committee of the whole House">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/4016</guid>
+      <link>https://bills.parliament.uk/bills/4016</link>
+      <category>Government Bill</category>
+      <category>Commons</category>
+      <title>Biodiversity Beyond National Jurisdiction Bill</title>
+      <description>A Bill to make provision for and in connection with the implementation by the United Kingdom of the Agreement under the United Nations Convention on the Law of the Sea on the Conservation and Sustainable Use of Marine Biological Diversity of Areas Beyond National Jurisdiction.</description>
+      <a10:updated>2025-11-11T15:46:52Z</a10:updated>
+    </item>
+    <item
+      p4:stage="Consideration of Commons amendments and / or reasons">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3884</guid>
+      <link>https://bills.parliament.uk/bills/3884</link>
+      <category>Government Bill</category>
+      <category>Lords</category>
+      <title>Mental Health Bill [HL]</title>
+      <description>A Bill to make provision to amend the Mental Health Act 1983 in relation to mentally disordered persons; and for connected purposes.</description>
+      <a10:updated>2025-11-11T15:16:34Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3975</guid>
+      <link>https://bills.parliament.uk/bills/3975</link>
+      <category>Private Members' Bill (Presentation Bill)</category>
+      <category>Commons</category>
+      <title>Energy and Employment Rights Bill</title>
+      <description>A Bill to set a timeline for the phasing out of UK oil and gas production and the decommissioning of related infrastructure; to require the Secretary of State to publish a plan for ensuring that oil and gas workers have access to appropriate redeployment or retraining opportunities, and to involve unions and communities in the production of this plan, which should include plans for funding; to make provision for the establishment of a training fund for workers in the oil and gas industry, to which oil and gas companies would contribute by paying a levy; to make provision for a proportion of workers’ wages to be guaranteed by the state for a defined period after they leave the oil and gas industry; to introduce sectoral collective bargaining in the energy industry; to extend legislation relating to pay and conditions for UK onshore workers to cover all offshore workers in the UK Continental Shelf and UK Exclusive Economic Area; to require GB Energy’s investments to support UK jobs; and for connected purposes.</description>
+      <a10:updated>2025-11-11T14:40:59Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/4005</guid>
+      <link>https://bills.parliament.uk/bills/4005</link>
+      <category>Private Members' Bill (under the Ten Minute Rule)</category>
+      <category>Commons</category>
+      <title>Human Fertilisation and Embryology (Regulation) Bill</title>
+      <description>A Bill to make provision about the regulation of online providers of fertility and certain ancillary services by the Human Fertilisation and Embryology Authority; and for connected purposes.</description>
+      <a10:updated>2025-11-11T14:38:18Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3981</guid>
+      <link>https://bills.parliament.uk/bills/3981</link>
+      <category>Private Members' Bill (under the Ten Minute Rule)</category>
+      <category>Commons</category>
+      <title>Royal Fleet Auxiliary (Report on Commissioner) Bill</title>
+      <description>A Bill to make provision for a report on the potential merits of appointing a commissioner to consider, investigate and make recommendations to address welfare issues faced by personnel serving in the Royal Fleet Auxiliary and their families.</description>
+      <a10:updated>2025-11-11T14:36:49Z</a10:updated>
+    </item>
+    <item
+      p4:stage="Report stage">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3982</guid>
+      <link>https://bills.parliament.uk/bills/3982</link>
+      <category>Government Bill</category>
+      <category>Commons</category>
+      <title>Pension Schemes Bill</title>
+      <description>A Bill to make provision about pension schemes; and for connected purposes.</description>
+      <a10:updated>2025-11-10T18:33:08Z</a10:updated>
+    </item>
+    <item
+      p4:stage="Report stage">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/4002</guid>
+      <link>https://bills.parliament.uk/bills/4002</link>
+      <category>Government Bill</category>
+      <category>Commons</category>
+      <title>English Devolution and Community Empowerment Bill</title>
+      <description>A Bill to make provision about combined authorities, combined county authorities, the Greater London Authority, local councils, police and crime commissioners and fire and rescue authorities, local audit and terms in business tenancies about rent.</description>
+      <a10:updated>2025-11-10T17:55:41Z</a10:updated>
+    </item>
+    <item
+      p4:stage="Consideration of Commons amendments and / or reasons">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3921</guid>
+      <link>https://bills.parliament.uk/bills/3921</link>
+      <category>Government Bill</category>
+      <category>Commons</category>
+      <title>Public Authorities (Fraud, Error and Recovery) Bill</title>
+      <description>A Bill to make provision about the prevention of fraud against public authorities and the making of erroneous payments by public authorities; about the recovery of money paid by public authorities as a result of fraud or error; and for connected purposes.</description>
+      <a10:updated>2025-11-10T17:23:56Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/4012</guid>
+      <link>https://bills.parliament.uk/bills/4012</link>
+      <category>Government Bill</category>
+      <category>Commons</category>
+      <title>Sentencing Bill</title>
+      <description>A Bill to make provision about the sentencing, release and management after sentencing of offenders; to make provision about bail; to make provision about the removal from the United Kingdom of foreign criminals; and for connected purposes.</description>
+      <a10:updated>2025-11-10T11:34:31Z</a10:updated>
+    </item>
+    <item
+      p4:stage="Report stage">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3929</guid>
+      <link>https://bills.parliament.uk/bills/3929</link>
+      <category>Government Bill</category>
+      <category>Commons</category>
+      <title>Border Security, Asylum and Immigration Bill</title>
+      <description>A Bill to make provision about border security; to make provision about immigration and asylum; to make provision about sharing customs data and trailer registration data; to make provision about articles for use in serious crime; to make provision about serious crime prevention orders; to make provision about fees paid in connection with the recognition, comparability or assessment of qualifications; and for connected purposes.</description>
+      <a10:updated>2025-11-07T17:37:50Z</a10:updated>
+    </item>
+    <item
+      p4:stage="Consideration of Commons amendments and / or reasons">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3737</guid>
+      <link>https://bills.parliament.uk/bills/3737</link>
+      <category>Government Bill</category>
+      <category>Commons</category>
+      <title>Employment Rights Bill</title>
+      <description>A Bill to make provision to amend the law relating to employment rights; to make provision about procedure for handling redundancies; to make provision about the treatment of workers involved in the supply of services under certain public contracts; to provide for duties to be imposed on employers in relation to equality; to amend the definition of “employment business” in the Employment Agencies Act 1973; to provide for the establishment of the School Support Staff Negotiating Body and the Social Care Negotiating Bodies; to amend the Seafarers’ Wages Act 2023; to make provision for the implementation of international agreements relating to maritime employment; to make provision about trade unions, industrial action, employers’ associations and the functions of the Certification Officer; to make provision about the enforcement of legislation relating to the labour market; and for connected purposes.</description>
+      <a10:updated>2025-11-07T11:20:34Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/4033</guid>
+      <link>https://bills.parliament.uk/bills/4033</link>
+      <category>Private Members' Bill (under the Ten Minute Rule)</category>
+      <category>Commons</category>
+      <title>Ferry services (Integration and Regulation) Bill</title>
+      <description>A Bill to make provision about the integration of ferry services with other transport services; to make provision about the regulation of ferry services; and for connected purposes.</description>
+      <a10:updated>2025-11-07T11:09:53Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/4030</guid>
+      <link>https://bills.parliament.uk/bills/4030</link>
+      <category>Government Bill</category>
+      <category>Commons</category>
+      <title>Railways Bill</title>
+      <description>A Bill to make provision about railways and railway services; and for connected purposes.</description>
+      <a10:updated>2025-11-07T10:36:19Z</a10:updated>
+    </item>
+    <item
+      p4:stage="Committee stage">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/4019</guid>
+      <link>https://bills.parliament.uk/bills/4019</link>
+      <category>Government Bill</category>
+      <category>Commons</category>
+      <title>Public Office (Accountability) Bill</title>
+      <description>A Bill to Impose a duty on public authorities and public officials to act with candour, transparency and frankness; to make provision for the enforcement of that duty in their dealings with inquiries and investigations; to require public authorities to promote and take steps to maintain ethical conduct within all parts of the authority; to create an offence in relation to public authorities and public officials who mislead the public; to create further offences in relation to the misconduct of persons who hold public office and to abolish the common law offence of misconduct in public office; to make provision enabling persons to participate at inquiries and investigations where the conduct of public authorities may be in issue; and for connected purposes.</description>
+      <a10:updated>2025-11-06T13:48:56Z</a10:updated>
+    </item>
+    <item
+      p4:stage="Committee stage">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/4004</guid>
+      <link>https://bills.parliament.uk/bills/4004</link>
+      <category>Government Bill</category>
+      <category>Commons</category>
+      <title>Diego Garcia Military Base and British Indian Ocean Territory Bill</title>
+      <description>A Bill to give effect to, and make provision in connection with, an agreement between the governments of the United Kingdom and the Republic of Mauritius concerning the Chagos Archipelago.</description>
+      <a10:updated>2025-11-05T18:14:56Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3972</guid>
+      <link>https://bills.parliament.uk/bills/3972</link>
+      <category>Government Bill</category>
+      <category>Commons</category>
+      <title>Sustainable Aviation Fuel Bill</title>
+      <description>A Bill to Make provision about sustainable aviation fuel.</description>
+      <a10:updated>2025-11-05T17:14:35Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3807</guid>
+      <link>https://bills.parliament.uk/bills/3807</link>
+      <category>Private Members' Bill (Presentation Bill)</category>
+      <category>Commons</category>
+      <title>Bullying and Respect at Work Bill</title>
+      <description>A Bill to provide for a statutory definition of bullying at work; to make provision relating to bullying at work, including to enable claims relating to workplace bullying to be considered by an employment tribunal; to provide for a Respect at Work Code to set minimum standards for positive and respectful work environments; to give powers to the Equalities and Human Rights Commission to investigate workplaces and organisations where there is evidence of a culture of, or multiple incidents of, bullying and to take enforcement action; and for connected purposes.</description>
+      <a10:updated>2025-11-05T16:07:58Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3788</guid>
+      <link>https://bills.parliament.uk/bills/3788</link>
+      <category>Private Members' Bill (Ballot Bill)</category>
+      <category>Commons</category>
+      <title>Short-term Let Accommodation Bill</title>
+      <description>A Bill to make provision for the licensing of short-term let accommodation; to make provision about the marketing of short-term let accommodation; to make provision about planning permission in respect of short-term let accommodation; to require the Secretary of State to publish guidance about the management of short-term let accommodation; to make provision about small business rates relief for short-term let accommodation; and for connected purposes.</description>
+      <a10:updated>2025-11-05T16:05:31Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/4021</guid>
+      <link>https://bills.parliament.uk/bills/4021</link>
+      <category>Private Members' Bill (under the Ten Minute Rule)</category>
+      <category>Commons</category>
+      <title>Child Poverty Strategy (Removal of Two Child Limit) Bill</title>
+      <description>A Bill to require the Secretary of State to publish a child poverty strategy which includes proposals for removing the limit on the number of children or qualifying young persons included in the calculation of an award of Universal Credit; and for connected purposes.</description>
+      <a10:updated>2025-11-05T15:19:29Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/4032</guid>
+      <link>https://bills.parliament.uk/bills/4032</link>
+      <category>Private Members' Bill (under the Ten Minute Rule)</category>
+      <category>Commons</category>
+      <title>Fertility Treatment (Right to Time Off) Bill</title>
+      <description>A Bill to make provision for a right to paid time off work for fertility treatment; and for connected purposes.</description>
+      <a10:updated>2025-11-05T11:56:45Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/4031</guid>
+      <link>https://bills.parliament.uk/bills/4031</link>
+      <category>Private Members' Bill (Presentation Bill)</category>
+      <category>Commons</category>
+      <title>Dairy Farming and Dairy Products Bill</title>
+      <description>A Bill to make provision to require the Secretary of State, in any negotiation relating to an international trade agreement, to seek to ensure that the agreement does not result in any detriment to UK dairy farmers; to make provision about the labelling of dairy products imported from outside the UK; to make provision about fair dealing between dairy farmers, processors and retailers, including in relation to pricing; to provide for certain additional contractual protections for dairy farmers; and for connected purposes.</description>
+      <a10:updated>2025-11-05T10:38:17Z</a10:updated>
+    </item>
+    <item
+      p4:stage="3rd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3787</guid>
+      <link>https://bills.parliament.uk/bills/3787</link>
+      <category>Private Members' Bill (Ballot Bill)</category>
+      <category>Commons</category>
+      <title>Space Industry (Indemnities) Bill</title>
+      <description>A Bill to require operator licences authorising the carrying out of spaceflight activities to specify the licensee's indemnity limit.</description>
+      <a10:updated>2025-11-05T09:59:04Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/4006</guid>
+      <link>https://bills.parliament.uk/bills/4006</link>
+      <category>Private Members' Bill (Presentation Bill)</category>
+      <category>Commons</category>
+      <title>International Court of Justice Advisory Opinion on Policies and Practices of Israel (Sanctions and Other Measures) Bill</title>
+      <description>A Bill to require the Secretary of State to take steps to give effect in the United Kingdom to the Advisory Opinion of the International Court of Justice issued on 19 July 2024 entitled “Legal Consequences arising from the Policies and Practices of Israel in the Occupied Palestinian Territory, including East Jerusalem”, including provision for sanctions and for other measures to give effect to that advisory opinion; and for connected purposes.</description>
+      <a10:updated>2025-11-05T09:49:50Z</a10:updated>
+    </item>
+    <item
+      p4:stage="Report stage">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3909</guid>
+      <link>https://bills.parliament.uk/bills/3909</link>
+      <category>Government Bill</category>
+      <category>Commons</category>
+      <title>Children’s Wellbeing and Schools Bill</title>
+      <description>A Bill to make provision about the safeguarding and welfare of children; about support for children in care or leaving care; about regulation of care workers; about regulation of establishments and agencies under Part 2 of the Care Standards Act 2000; about employment of children; about breakfast club provision and school uniform; about attendance of children at school; about regulation of independent educational institutions; about inspections of schools and colleges; about teacher misconduct; about Academies and teachers at Academies; repealing section 128 of the Education Act 2002; about school places and admissions; about establishing new schools; and for connected purposes.</description>
+      <a10:updated>2025-11-04T17:20:14Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3838</guid>
+      <link>https://bills.parliament.uk/bills/3838</link>
+      <category>Private Members' Bill (Presentation Bill)</category>
+      <category>Commons</category>
+      <title>Nature-based Solutions (Water and Flooding) Bill</title>
+      <description>A Bill to require water companies and relevant public bodies to use nature-based solutions as a means to improve water and flood risk management services; and for connected purposes.</description>
+      <a10:updated>2025-11-04T14:27:00Z</a10:updated>
+    </item>
+    <item
+      p4:stage="Royal Assent">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3785</guid>
+      <link>https://bills.parliament.uk/bills/3785</link>
+      <category>Private Members' Bill (Ballot Bill)</category>
+      <category>Commons</category>
+      <title>Absent Voting (Elections in Scotland and Wales) Act 2025</title>
+      <description>A Bill to make provision about absent voting in connection with local government elections in Scotland and Wales, elections to the Scottish Parliament and elections to Senedd Cymru; and for connected purposes.</description>
+      <a10:updated>2025-10-31T16:45:37Z</a10:updated>
+    </item>
+    <item
+      p4:stage="Royal Assent">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3764</guid>
+      <link>https://bills.parliament.uk/bills/3764</link>
+      <category>Government Bill</category>
+      <category>Commons</category>
+      <title>Renters’ Rights Act 2025</title>
+      <description>A Bill to make provision changing the law about rented homes, including provision abolishing fixed term assured tenancies and assured shorthold tenancies; imposing obligations on landlords and others in relation to rented homes and temporary and supported accommodation; and for connected purposes.</description>
+      <a10:updated>2025-10-31T16:44:36Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3902</guid>
+      <link>https://bills.parliament.uk/bills/3902</link>
+      <category>Private Members' Bill (Presentation Bill)</category>
+      <category>Commons</category>
+      <title>Domestic Abuse (Aggravated Offences) Bill</title>
+      <description>A Bill to create certain domestic abuse aggravated offences; and for connected purposes.</description>
+      <a10:updated>2025-10-31T15:55:07Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/4029</guid>
+      <link>https://bills.parliament.uk/bills/4029</link>
+      <category>Private Members' Bill (under the Ten Minute Rule)</category>
+      <category>Commons</category>
+      <title>Perinatal Mental Health Assessments Bill</title>
+      <description>A Bill to require the provision of mental health assessments in NHS antenatal care for the purpose of identifying those at risk of perinatal mental health problems and making referrals to appropriate support; and for connected purposes.</description>
+      <a10:updated>2025-10-31T15:53:40Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3984</guid>
+      <link>https://bills.parliament.uk/bills/3984</link>
+      <category>Private Members' Bill (under the Ten Minute Rule)</category>
+      <category>Commons</category>
+      <title>Freedom of Expression (Religion or Belief System) Bill</title>
+      <description>A Bill to make provision about freedom of expression in relation to religion or belief systems; and for connected purposes.</description>
+      <a10:updated>2025-10-31T15:52:49Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3803</guid>
+      <link>https://bills.parliament.uk/bills/3803</link>
+      <category>Private Members' Bill (Presentation Bill)</category>
+      <category>Commons</category>
+      <title>Special Envoy for Freedom of Religion or Belief Bill</title>
+      <description>A Bill to require the continued appointment of a special envoy for freedom of religion or belief and make provision about the special envoy’s functions.</description>
+      <a10:updated>2025-10-31T15:47:02Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3970</guid>
+      <link>https://bills.parliament.uk/bills/3970</link>
+      <category>Private Members' Bill (Presentation Bill)</category>
+      <category>Commons</category>
+      <title>Immigration and Visas Bill</title>
+      <description>A Bill to make provision about the disapplication of the Human Rights Act 1998 in relation to immigration law; to make provision about certain immigration statuses; to require the Secretary of State to set an annual limit on the number of people entering the United Kingdom through non-visitor visa routes; to make provision about the removal from the United Kingdom of certain persons including foreign national offenders; to create exemptions from the Data Protection Act 2018 provisions relating to illegal migration; to make provision about age assessments for immigration law purposes; and for connected purposes.</description>
+      <a10:updated>2025-10-31T15:46:06Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3977</guid>
+      <link>https://bills.parliament.uk/bills/3977</link>
+      <category>Private Members' Bill (Presentation Bill)</category>
+      <category>Commons</category>
+      <title>Child Abduction and Custody Act 1985 (Amendment) Bill</title>
+      <description>A Bill to amend the Child Abduction and Custody Act 1985 to make provision about the interpretation of that Act in relation to domestic abuse.</description>
+      <a10:updated>2025-10-31T15:45:06Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3931</guid>
+      <link>https://bills.parliament.uk/bills/3931</link>
+      <category>Private Members' Bill (Presentation Bill)</category>
+      <category>Commons</category>
+      <title>Statutory Adoption Pay (Report on Extension to the Self-Employed) Bill</title>
+      <description>A Bill to require the Secretary of State to report to Parliament on the merits of extending eligibility for statutory adoption pay to persons who are self-employed or contractors; and for connected purposes.</description>
+      <a10:updated>2025-10-31T15:43:46Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3757</guid>
+      <link>https://bills.parliament.uk/bills/3757</link>
+      <category>Private Members' Bill (Starting in the House of Lords)</category>
+      <category>Lords</category>
+      <title>Listed Investment Companies (Classification etc) Bill [HL]</title>
+      <description>A Bill to make provision about listed investment companies; the classification and characteristics of those companies; and for connected purposes.</description>
+      <a10:updated>2025-10-31T15:42:52Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3794</guid>
+      <link>https://bills.parliament.uk/bills/3794</link>
+      <category>Private Members' Bill (Presentation Bill)</category>
+      <category>Commons</category>
+      <title>Company Directors (Duties) Bill</title>
+      <description>A Bill to amend section 172 of the Companies Act 2006 to require company directors to balance their duty to promote the success of the company with duties in respect of the environment and the company’s employees.</description>
+      <a10:updated>2025-10-31T15:41:50Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3866</guid>
+      <link>https://bills.parliament.uk/bills/3866</link>
+      <category>Private Members' Bill (Presentation Bill)</category>
+      <category>Commons</category>
+      <title>Regulatory Impact Assessments Bill</title>
+      <description>A Bill to require a Regulatory Impact Assessment to be published for all primary and secondary legislation introduced by the Government; to make provision for associated sanctions; and for connected purposes.</description>
+      <a10:updated>2025-10-31T15:40:55Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3867</guid>
+      <link>https://bills.parliament.uk/bills/3867</link>
+      <category>Private Members' Bill (Presentation Bill)</category>
+      <category>Commons</category>
+      <title>Rule of Law (Enforcement by Public Authorities) Bill</title>
+      <description>A Bill to require public authorities to exercise their statutory powers to investigate and take enforcement action for breaches of the law; to make provision for sanctions for failing to take such action; and for connected purposes.</description>
+      <a10:updated>2025-10-31T15:38:53Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3844</guid>
+      <link>https://bills.parliament.uk/bills/3844</link>
+      <category>Private Members' Bill (Presentation Bill)</category>
+      <category>Commons</category>
+      <title>Bank of England (Inflation Targets) Bill</title>
+      <description>A Bill to make provision for penalties against the Court of Directors of the Bank of England for failure to meet inflation targets.</description>
+      <a10:updated>2025-10-31T15:37:20Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/4018</guid>
+      <link>https://bills.parliament.uk/bills/4018</link>
+      <category>Private Members' Bill (Presentation Bill)</category>
+      <category>Commons</category>
+      <title>Planning and Development (Community Infrastructure) Bill</title>
+      <description>A Bill to require housing developers to construct any planned community infrastructure before commencing construction of housing with which the planned community infrastructure is associated; and for connected purposes.</description>
+      <a10:updated>2025-10-31T15:35:52Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3748</guid>
+      <link>https://bills.parliament.uk/bills/3748</link>
+      <category>Private Members' Bill (Starting in the House of Lords)</category>
+      <category>Lords</category>
+      <title>Statutory Instruments (Amendment) Bill [HL]</title>
+      <description>A Bill to amend the Statutory Instruments Act 1946; to make provision for the conditional amendment of statutory instruments; and for connected purposes.</description>
+      <a10:updated>2025-10-31T15:34:47Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3980</guid>
+      <link>https://bills.parliament.uk/bills/3980</link>
+      <category>Private Members' Bill (Presentation Bill)</category>
+      <category>Commons</category>
+      <title>Short-term Lets (Planning Permission) Bill</title>
+      <description>A Bill to introduce a requirement for a grant of planning permission to change a residential home to a short-term let in England; and for connected purposes.</description>
+      <a10:updated>2025-10-31T14:28:44Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3917</guid>
+      <link>https://bills.parliament.uk/bills/3917</link>
+      <category>Private Members' Bill (Presentation Bill)</category>
+      <category>Commons</category>
+      <title>Rural Crime (Strategy) Bill</title>
+      <description>A Bill to require the Secretary of State to establish a task force to produce a strategy for tackling rural crime; to require the Secretary of State to implement the strategy; and for connected purposes.</description>
+      <a10:updated>2025-10-31T14:27:34Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/3927</guid>
+      <link>https://bills.parliament.uk/bills/3927</link>
+      <category>Private Members' Bill (under the Ten Minute Rule)</category>
+      <category>Commons</category>
+      <title>Women’s State Pension Age (Ombudsman Report and Compensation Scheme) Bill</title>
+      <description>A Bill to require the Secretary of State to publish measures to address the findings of the Parliamentary and Health Service Ombudsman in its report entitled “Women’s State Pension age: our findings on injustice and associated issues”; to require the Secretary of State to publish proposals for a compensation scheme for women born between 6 April 1950 and 5 April 1960 inclusive who have been affected by increases in the state pension age; and for connected purposes.</description>
+      <a10:updated>2025-10-31T14:26:32Z</a10:updated>
+    </item>
+    <item
+      p4:stage="2nd reading">
+      <guid
+        isPermaLink="true">https://bills.parliament.uk/bills/4024</guid>
+      <link>https://bills.parliament.uk/bills/4024</link>
+      <category>Private Members' Bill (Presentation Bill)</category>
+      <category>Commons</category>
+      <title>Hospices and Palliative Care Bill</title>
+      <description>A Bill to place a duty on the Secretary of State to ensure the availability of hospice services for all people at the end of life; to require the Secretary of State to report annually to Parliament on the adequacy of funding for children’s and adult hospice services, including an assessment of whether any funding increases are necessary to maintain such services; to require the Secretary of State to publish a five year plan for hospice funding; to make provision about the availability of specialist palliative care in emergency care services in hospitals; to make provision about supporting patients receiving palliative care in the community in certain circumstances; to require the Secretary of State to prepare and publish a workforce plan for hospice services; to require palliative care advice to be available through non-emergency NHS advice services; and for connected purposes.</description>
+      <a10:updated>2025-10-31T14:25:15Z</a10:updated>
+    </item>
+  </channel>
+</rss>

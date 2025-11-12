@@ -81,7 +81,7 @@
   },
   "uk_legislation": {
     "enabled": true,
-    "channel_id": null,
+    "channel_id": 1437895790231031901,
     "interval_hours": 1,
     "minute_offset": 15,
     "concurrency_limit": 3,
@@ -90,8 +90,8 @@
     "approved_roles": []
   },
   "general_news": {
-    "enabled": true,
-    "channel_id": null,
+    "enabled": false,
+    "channel_id": 1437900606433136680,
     "interval_hours": 2,
     "minute_offset": 20,
     "concurrency_limit": 5,
