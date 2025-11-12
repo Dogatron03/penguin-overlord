@@ -41,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Duplicate/redundant documentation files
 
 ### Fixed
+- UK Legislation Tracker RSS feed parsing to handle `<item>` tags with attributes (e.g., `rdf:about`)
 - Inconsistent default behavior (XKCD and Comics now disabled by default like News)
 - Documentation scattered across project root (now organized in docs/)
 
