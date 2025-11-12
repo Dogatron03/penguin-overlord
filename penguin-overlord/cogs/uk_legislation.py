@@ -79,12 +79,12 @@ class UKLegislation(commands.Cog):
         try:
             from datetime import datetime, timedelta, timezone
             
-            # Try to extract publication date
+            # Try to extract publication date - handle tags with attributes
             date_patterns = [
-                r'<pubDate>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</pubDate>',
-                r'<published>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</published>',
-                r'<updated>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</updated>',
-                r'<dc:date>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</dc:date>'
+                r'<pubDate(?:\s+[^>]*)?>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</pubDate>',
+                r'<published(?:\s+[^>]*)?>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</published>',
+                r'<updated(?:\s+[^>]*)?>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</updated>',
+                r'<dc:date(?:\s+[^>]*)?>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</dc:date>'
             ]
             
             date_str = None
@@ -140,8 +140,8 @@ class UKLegislation(commands.Cog):
                 
                 content = await response.text()
                 
-                # Parse RSS/Atom feed
-                item_pattern = r'<item>(.*?)</item>' if '<item>' in content else r'<entry>(.*?)</entry>'
+                # Parse RSS/Atom feed - handle tags with attributes (e.g., <item rdf:about="...">)
+                item_pattern = r'<item(?:\s+[^>]*)?>.*?</item>' if '<item' in content else r'<entry(?:\s+[^>]*)?>.*?</entry>'
                 items = re.findall(item_pattern, content, re.DOTALL)
                 
                 if not items:
@@ -154,12 +154,12 @@ class UKLegislation(commands.Cog):
                     if not self._is_recent(item, max_days):
                         continue  # Skip old items
                     
-                    # Extract title
-                    title_match = re.search(r'<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</title>', item, re.DOTALL)
+                    # Extract title - handle tags with attributes
+                    title_match = re.search(r'<title(?:\s+[^>]*)?>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</title>', item, re.DOTALL)
                     title = unescape(title_match.group(1).strip()) if title_match else "No title"
                     
-                    # Extract link
-                    link_match = re.search(r'<link>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</link>', item, re.DOTALL)
+                    # Extract link - handle tags with attributes
+                    link_match = re.search(r'<link(?:\s+[^>]*)?>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</link>', item, re.DOTALL)
                     if not link_match:
                         link_match = re.search(r'<link\s+href="([^"]+)"', item)
                     link = link_match.group(1).strip() if link_match else source['url']
@@ -171,10 +171,10 @@ class UKLegislation(commands.Cog):
                     if link in self.posted_items[source_key]:
                         continue  # Skip already posted
                     
-                    # Extract description
-                    desc_match = re.search(r'<description>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</description>', item, re.DOTALL)
+                    # Extract description - handle tags with attributes
+                    desc_match = re.search(r'<description(?:\s+[^>]*)?>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</description>', item, re.DOTALL)
                     if not desc_match:
-                        desc_match = re.search(r'<summary>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</summary>', item, re.DOTALL)
+                        desc_match = re.search(r'<summary(?:\s+[^>]*)?>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</summary>', item, re.DOTALL)
                     
                     description = ""
                     if desc_match:
